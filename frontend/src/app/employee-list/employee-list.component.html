@@ -1,0 +1,21 @@
+<div class="container">
+    <h2>Employees</h2>
+    <button class="btn btn-success mb-3" (click)="showAddForm = true">Add Employee</button>
+
+    <app-employee-form *ngIf="showAddForm" (submit)="addEmployee($event)"></app-employee-form>
+
+    <h3 class="list-title">📋 Employee List</h3>
+    <ul class="employee-list">
+      <li *ngFor="let employee of employees" class="employee-item">
+        <div>
+          <strong>{{ employee.name }}</strong>
+          <p class="position">{{ employee.position }}</p>
+          <p class="salary">Salary: ${{ employee.salary }}</p>
+        </div>
+        <div class="item-buttons">
+          <button (click)="onEdit(employee)" class="btn btn-warning">Edit</button>
+          <button *ngIf="employee.id" (click)="onDelete(employee.id)" class="btn btn-danger">Delete</button>
+        </div>
+      </li>
+    </ul>
+  </div>

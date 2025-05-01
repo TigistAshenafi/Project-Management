@@ -1,0 +1,28 @@
+<div class="container">
+    <h2>User Role Management</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Current Role</th>
+          <th>New Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.username }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <select class="form-select" [(ngModel)]="user.newRole">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </td>
+          <td>
+            <button class="btn btn-primary" (click)="updateRole(user)">Update</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

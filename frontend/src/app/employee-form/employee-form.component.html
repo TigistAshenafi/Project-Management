@@ -1,0 +1,45 @@
+<div class="employee-container">
+  <!-- Toggle Add/Edit Button -->
+  <button class="btn btn-success" (click)="toggleAddForm()" id="btn">
+    {{ editMode ? '✏️ Editing Employee' : (showForm ? '- Cancel Add' : '+ Add Employee') }}
+  </button>
+
+  <!-- Show form only if showForm is true -->
+  <form *ngIf="showForm" [formGroup]="employeeForm" (ngSubmit)="editMode ? updateEmployee() : addEmployee()" class="employee-form">
+    <h2 class="form-title">{{ editMode ? '✏️ Edit Employee' : '➕ Add New Employee' }}</h2>
+
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input formControlName="name" class="form-input" id="name" />
+      <div *ngIf="formControls['name'].invalid && (formControls['name'].dirty || formControls['name'].touched)" class="text-danger">
+        <small *ngIf="formControls['name'].errors?.['required']">Name is required</small>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="position">Position</label>
+      <input formControlName="position" class="form-input" id="position" />
+      <div *ngIf="formControls['position'].invalid && (formControls['position'].dirty || formControls['position'].touched)" class="text-danger">
+        <small *ngIf="formControls['position'].errors?.['required']">Position is required</small>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="salary">Salary</label>
+      <input type="number" formControlName="salary" class="form-input" id="salary" min="0" />
+      <div *ngIf="formControls['salary'].invalid && (formControls['salary'].dirty || formControls['salary'].touched)" class="text-danger">
+        <small *ngIf="formControls['salary'].errors?.['required']">Salary is required</small>
+        <small *ngIf="formControls['salary'].errors?.['min']">Salary must be positive</small>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" class="btn btn-primary" [disabled]="employeeForm.invalid">
+        {{ editMode ? 'Update Employee' : 'Create Employee' }}
+      </button>
+      <button type="button" *ngIf="editMode" (click)="onCancel()" class="btn btn-secondary">
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,20 @@
+<button (click)="toggleForm()">Add Task</button>
+
+<form *ngIf="showForm" [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+  <input formControlName="title" placeholder="Title">
+  <textarea formControlName="description" placeholder="Description"></textarea>
+  <select formControlName="status">
+    <option>To Do</option>
+    <option>In Progress</option>
+    <option>Done</option>
+  </select>
+  <button type="submit">{{ editingTask ? 'Update' : 'Create' }}</button>
+</form>
+
+<ul>
+  <li *ngFor="let task of tasks">
+    <strong>{{ task.title }}</strong> - {{ task.status }}
+    <button (click)="editTask(task)">Edit</button>
+    <button (click)="deleteTask(task.id!)">Delete</button>
+  </li>
+</ul>

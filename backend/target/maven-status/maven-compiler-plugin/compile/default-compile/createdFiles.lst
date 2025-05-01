@@ -1,0 +1,9 @@
+com\example\config\AuthConfig.class
+com\example\AllRoute.class
+com\example\handlers\ProjectHandler.class
+com\example\config\DatabaseConfig.class
+com\example\handlers\TaskHandler.class
+com\example\handlers\EmployeeHandler.class
+com\example\AuthVerticle.class
+com\example\MySQLVerticle.class
+com\example\MainVerticle.class

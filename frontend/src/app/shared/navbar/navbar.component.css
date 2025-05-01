@@ -1,0 +1,27 @@
+nav{
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-bottom: 1px solid #dee2e6;
+}
+.logout{
+  color: #080808;
+  text-decoration: none;
+  font-size: 18px;
+  float: right;
+  margin-right: 30px;
+}
+.logout:hover {
+  text-decoration: underline;
+}
+i{
+  margin-left: 5px;
+  font-size: 30px;
+  font-weight: bold;
+}
+.title{
+  gap: 10px;
+  width: 300px;;
+  font-size: 24px;
+  color: #333;
+  font-family: 'Arial', sans-serif;
+}
