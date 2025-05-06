@@ -1,6 +1,5 @@
-package com.example.verticle;
+package com.example;
 import com.example.config.AuthConfig;
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Promise;

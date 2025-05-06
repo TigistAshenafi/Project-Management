@@ -13,15 +13,16 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth.interceptor';
 import { RoleGuard } from './role.guard';
 import { AuthGuard } from './auth.guard';
-import { AuthService } from './Services/auth.service';
+import { AuthService } from './core/Services/auth.service';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ProjectManagementComponent } from './project-management/project-management.component';
-import { EmployeeFormComponent } from './employee-form/employee-form.component';
-import { EmployeeListComponent } from './employee-list/employee-list.component';
 import { TaskManagementComponent } from './task-management/task-management.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
-
+import { EmployeeManagementComponent } from './employee-management/employee-management.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,14 +33,20 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
     DashboardComponent,
     ErrorComponent,
     ProjectManagementComponent,
-    EmployeeFormComponent,
-    EmployeeListComponent,
     TaskManagementComponent,
-    NavbarComponent
+    NavbarComponent,
+    EmployeeManagementComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,ReactiveFormsModule,FormsModule,HttpClientModule,RouterModule
+    AppRoutingModule,ReactiveFormsModule,FormsModule,HttpClientModule,RouterModule, ToastrModule.forRoot({
+      positionClass: 'toast-top-right',   // Positions: toast-top-left, toast-bottom-right, etc.
+      timeOut: 4000,                      // Duration in milliseconds
+      progressBar: true,                  // Show a progress bar
+      closeButton: true,                  // Show a close (X) button
+      tapToDismiss: true,                 // Dismiss on click
+      newestOnTop: true
+    }),BrowserAnimationsModule,MatSnackBarModule
   ],
   providers: [
     AuthService,

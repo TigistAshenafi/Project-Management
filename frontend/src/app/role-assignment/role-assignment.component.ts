@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../Services/auth.service';
+import { AuthService } from '../core/Services/auth.service';
 
 @Component({
   selector: 'app-role-assignment',

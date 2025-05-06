@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Project } from '../models/project.model'; // Adjust the path as needed
+import { Project } from '../models/project.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsService {

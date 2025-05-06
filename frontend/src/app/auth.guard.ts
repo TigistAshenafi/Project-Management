@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { BehaviorSubject, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AuthService } from './Services/auth.service';
+import { AuthService } from './core/Services/auth.service';
 
 @Injectable({
   providedIn: 'root'

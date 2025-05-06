@@ -1,4 +1,4 @@
-package com.example.verticle;
+package com.example;
 
 import com.example.config.DatabaseConfig;
 
@@ -83,6 +83,7 @@ public class MySQLVerticle extends AbstractVerticle {
                                  status ENUM('To Do', 'In Progress', 'Done') DEFAULT 'To Do',
                                  project_id INT,
                                  assigned_to INT,
+                                 dueDate DATE,
                                  FOREIGN KEY (project_id) REFERENCES projects(id),
                                  FOREIGN KEY (assigned_to) REFERENCES employees(id),
                                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

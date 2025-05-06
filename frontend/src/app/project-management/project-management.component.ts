@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ProjectsService, Project } from '../services/projects.service';
+import { ProjectsService } from '../core/Services/projects.service';
+import { Project } from '../core/models/project.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-project-management',
@@ -15,7 +17,9 @@ export class ProjectManagementComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private projectsService: ProjectsService
+    private projectsService: ProjectsService,
+    private formBuilder: FormBuilder,
+    private toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -71,10 +75,18 @@ export class ProjectManagementComponent implements OnInit {
 
   addProjects(): void {
     const projectData = this.projectForm.value;
-    this.projectsService.createProject(projectData).subscribe(() => {
+    this.projectsService.createProject(projectData).subscribe((e) => {
+      console.log('Project created:', e);
+      this.showForm = false;
       this.loadProjects();
       this.projectForm.reset();
-      this.showForm = false;
+      this.toastr.success('Project created successfully', 'Created!', {
+        toastClass: 'custom-toast',
+        closeButton: true,
+        timeOut: 3000,
+        progressBar: true,
+        positionClass: 'toast-top-right'
+      });
     });
   }
 
@@ -82,11 +94,21 @@ export class ProjectManagementComponent implements OnInit {
     if (this.editingProjectId === null) return;
 
     const updatedData = { id: this.editingProjectId, ...this.projectForm.value };
-    this.projectsService.updateProject(this.editingProjectId, updatedData).subscribe(() => {
+    this.projectsService.updateProject(this.editingProjectId, updatedData).subscribe((e) => {
+      console.log('Project updated:', e);
+
       this.loadProjects();
       this.projectForm.reset();
       this.editingProjectId = null;
       this.showForm = false;
+      this.toastr.success('Project updated successfully!', 'Updated', {
+        toastClass: 'custom-toast',
+        closeButton: true,
+        timeOut: 3000,
+        progressBar: true,
+        positionClass: 'toast-top-right'
+
+      });
     });
   }
 
@@ -94,6 +116,13 @@ export class ProjectManagementComponent implements OnInit {
     if (confirm('Are you sure you want to delete this project?')) {
       this.projectsService.deleteProject(id).subscribe(() => {
         this.loadProjects();
+        this.toastr.info('Project deleted successfully!', 'Deleted', {
+          toastClass: 'custom-toast',
+          closeButton: true,
+          timeOut: 3000,
+          progressBar: true,
+          positionClass: 'toast-top-right'
+        });
       });
     }
   }

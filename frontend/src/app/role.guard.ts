@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { environment } from 'src/environments/environment';
-import { AuthService } from './Services/auth.service';
+import { AuthService } from './core/Services/auth.service';
 
 @Injectable({
   providedIn: 'root'

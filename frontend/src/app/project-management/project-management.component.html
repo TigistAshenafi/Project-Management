@@ -28,16 +28,23 @@
     </div>
   </form>
 <h3 class="list-title">📋 Project List</h3>
-<ul class="project-list">
-  <li *ngFor="let project of projects" class="project-item">
-    <div>
-      <strong>{{ project.name }}</strong>
-      <p class="description">{{ project.description }}</p>
-    </div>
-    <div class="item-buttons">
-      <button (click)="onEdit(project)" class="btn btn-warning">Edit</button>
-      <button (click)="onDelete(project.id)" class="btn btn-danger">Delete</button>
-    </div>
-  </li>
-</ul>
+<table class="project-list">
+  <thead>
+    <tr>
+      <th>Project Name</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let project of projects">
+      <td>{{ project.name }}</td>
+      <td>{{ project.description }}</td>
+      <td class="item-buttons">
+        <button (click)="onEdit(project)" class="btn btn-warning">Edit</button>
+        <button (click)="onDelete(project.id)" class="btn btn-danger">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+  </table>
 </div>

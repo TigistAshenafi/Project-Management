@@ -5,7 +5,7 @@
   </button>
 
   <!-- Show form only if showForm is true -->
-  <form *ngIf="showForm" [formGroup]="employeeForm" (ngSubmit)="editMode ? updateEmployee() : addEmployee()" class="employee-form">
+  <form *ngIf="showForm" [formGroup]="employeeForm" (ngSubmit)=" selectedEmployeeId ? updateEmployee() : createEmployee()" class="employee-form">
     <h2 class="form-title">{{ editMode ? '✏️ Edit Employee' : '➕ Add New Employee' }}</h2>
 
     <div class="form-group">
@@ -42,4 +42,29 @@
       </button>
     </div>
   </form>
+
+  <div class="employee-list">
+    <h3 class="list-title">📋 Employee List</h3>
+    <table class="employee-list">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Salary</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let employee of employees">
+          <td>{{ employee.name }}</td>
+          <td>{{ employee.position }}</td>
+          <td>${{ employee.salary }}</td>
+          <td class="item-buttons">
+            <button (click)="onEdit(employee)" class="btn btn-warning">Edit</button>
+            <button *ngIf="employee.id" (click)="onDelete(employee.id)" class="btn btn-danger">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
 </div>

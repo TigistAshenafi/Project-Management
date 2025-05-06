@@ -1,0 +1,114 @@
+.task-management {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(to right, #fdfbfb, #ebedee);
+  border-radius: 16px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  font-family: 'Poppins', sans-serif;
+}
+
+.task-management h2,
+.task-management h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+button {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  margin: 0.5rem 0.5rem 1rem 0;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+button[type="button"] {
+  background-color: #9ca3af;
+}
+
+button:hover {
+  background-color: #4338ca;
+  transform: scale(1.03);
+}
+
+.task-form {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+}
+
+.task-form div {
+  margin-bottom: 1.2rem;
+}
+
+.task-form label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.task-form input,
+.task-form textarea,
+.task-form select {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #f9fafb;
+  transition: border-color 0.2s;
+}
+
+.task-form input:focus,
+.task-form textarea:focus,
+.task-form select:focus {
+  border-color: #6366f1;
+  outline: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+th,
+td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #111827;
+}
+
+td button {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  margin-right: 0.5rem;
+  border-radius: 6px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+td button:hover {
+  background-color: #3b82f6;
+}

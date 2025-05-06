@@ -1,4 +1,4 @@
-package com.example.verticle;
+package com.example;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -31,14 +31,6 @@ public class AllRoute extends AbstractVerticle {
     @Override
     public void start(Promise<Void> startPromise) {
         Router router = Router.router(vertx);
-        
-        // CORS Configuration
-        // router.route().handler(CorsHandler.create()
-        //     .addOrigin("*")
-        //     .allowedMethods(Set.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE))
-        //     .allowedHeaders(Set.of("Content-Type", "Authorization"))
-        //     .exposedHeaders(Set.of("Authorization")));
-        
      
 router.route().handler(CorsHandler.create()
     .addOrigin("*")
@@ -60,15 +52,22 @@ ctx.response()
         // JWT Middleware
         router.route().handler(JWTAuthHandler.create(jwtAuth));
         // CORS Configuration + Preflight handling
+
         // Employee Routes
         router.get("/api/employees").handler(employeeHandler::getAllEmployees);
         router.post("/api/employees").handler(employeeHandler::createEmployee);
+        // Inside your Vert.x server setup
         router.put("/api/employees/:id").handler(employeeHandler::updateEmployee);
         router.delete("/api/employees/:id").handler(employeeHandler::deleteEmployee);
+
+        // Project Routes
         router.get("/api/projects").handler(projectHandler::getAllProjects);
         router.post("/api/projects").handler(projectHandler::createProject);
         router.put("/api/projects/:id").handler(projectHandler::updateProject);
         router.delete("/api/projects/:id").handler(projectHandler::deleteProject);
+
+
+        // Task Routes
         router.get("/api/tasks").handler(taskHandler::getAllTask);
         router.post("/api/tasks").handler(taskHandler::createTask);
         router.put("/api/tasks/:id").handler(taskHandler::updateTask);

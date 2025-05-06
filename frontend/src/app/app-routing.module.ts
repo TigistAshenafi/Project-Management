@@ -8,9 +8,9 @@ import { RoleAssignmentComponent } from './role-assignment/role-assignment.compo
 import { RoleGuard } from './role.guard';
 import { AuthGuard } from './auth.guard';
 import { ProjectManagementComponent } from './project-management/project-management.component';
-import { EmployeeFormComponent } from './employee-form/employee-form.component';
-import { EmployeeListComponent } from './employee-list/employee-list.component';
 import { TaskManagementComponent } from './task-management/task-management.component';
+import { NavbarComponent } from './shared/navbar/navbar.component';
+import { EmployeeManagementComponent } from './employee-management/employee-management.component';
 
 
 export const routes: Routes = [
@@ -21,7 +21,7 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'employees', component: EmployeeListComponent },
+      { path: 'employees', component: EmployeeManagementComponent },
       { path: 'projects', component: ProjectManagementComponent },
       { path: 'tasks', component: TaskManagementComponent },
       {
