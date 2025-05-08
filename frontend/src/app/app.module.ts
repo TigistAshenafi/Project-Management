@@ -23,6 +23,7 @@ import { EmployeeManagementComponent } from './employee-management/employee-mana
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { TimeLogManagementComponent } from './time-log-management/time-log-management.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,11 +37,12 @@ import { ToastrModule } from 'ngx-toastr';
     TaskManagementComponent,
     NavbarComponent,
     EmployeeManagementComponent,
+    TimeLogManagementComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,ReactiveFormsModule,FormsModule,HttpClientModule,RouterModule, ToastrModule.forRoot({
-      positionClass: 'toast-top-right',   // Positions: toast-top-left, toast-bottom-right, etc.
+      positionClass: 'toast-bottom-center',   // Positions: toast-top-left, toast-bottom-right, etc.
       timeOut: 4000,                      // Duration in milliseconds
       progressBar: true,                  // Show a progress bar
       closeButton: true,                  // Show a close (X) button

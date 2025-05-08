@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TaskService } from '../core/Services/task.service';
 import { Task } from 'src/app/core/models/task.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastrService } from 'ngx-toastr';
+import { Employee } from '../core/models/employee.model';
+import { Project } from '../core/models/project.model';
 
 @Component({
   selector: 'app-task-management',
@@ -10,26 +12,20 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./task-management.component.css']
 })
 export class TaskManagementComponent implements OnInit {
-  taskForm: FormGroup;
+  taskForm!: FormGroup;
   tasks: Task[] = [];
-  employees: any[] = [];
-  projects: any[] = [];
-  editingTask: Task | null = null;
+  employees: Employee[] = [];
+  projects: Project[] = [];
+  editingTaskId: number | null = null;
+  showForm = false;
   statuses = ['To Do', 'In Progress', 'Done'];
-
-    addTasks(): void {
-      if (this.taskForm.valid) {
-        const taskData = this.taskForm.value;
-        console.log('Task added:', taskData);
-        // Add logic to save the task
-      }
-    }
-
-  showForm: boolean = false;
 
   constructor(private fb: FormBuilder,
      private taskService: TaskService,
-     private snackBar: MatSnackBar) {
+      private toastr: ToastrService,
+) {}
+
+  ngOnInit() {
     this.taskForm = this.fb.group({
       title: ['', Validators.required],
       description: [''],
@@ -38,35 +34,139 @@ export class TaskManagementComponent implements OnInit {
       employeeId: ['', Validators.required],
       dueDate: ['', Validators.required],
     });
+    this.loadTask();
   }
 
-  toggleForm() {
+  toggleForm(): void {
     this.showForm = !this.showForm;
-    if (!this.showForm) {
+    if (this.showForm) {
       this.resetForm();
     }
   }
-
-  ngOnInit() {
-    this.loadInitialData();
+  onAddClick(): void {
+    this.editingTaskId = null;
+    this.taskForm.reset();
+    this.showForm = true;
   }
 
-  loadInitialData() {
-    this.taskService.getTasks().subscribe((tasks) => {
-      this.tasks = tasks.map(task => ({
-        id: task.id,
-        title: task.title,
-        description: task.description,
-        status: task.status,
-        projectId: task.projectId,
-        employeeId: task.employeeId,
-        dueDate: task.dueDate
-      }));
-    });
+  onSubmit(): void {
+    if (this.taskForm.invalid)
+      return console.log('your data is not appropraite.');
+      ;
 
+    if (this.editingTaskId !== null) {
+      this.updateTask();
+    } else {
+      this.addTasks();
+    }
+  }
+
+  onEdit(task: Task) {
+    if (this.editingTaskId === task.id && this.showForm) {
+      this.onCancelEdit();
+    } else {
+    this.taskForm.patchValue(task);
+    this.editingTaskId = task.id ?? null;
+    this.showForm = true;
+  }
+}
+
+onCancelEdit(): void {
+  this.editingTaskId = null;
+  this.taskForm.reset();
+  this.showForm = false;
+}
+
+addTasks(): void {
+  const taskData = {
+    ...this.taskForm.value,
+    projectId: Number(this.taskForm.value.projectId) || null,
+    employeeId: Number(this.taskForm.value.employeeId) || null,
+  };
+
+  this.taskService.createTask(taskData).subscribe({
+    next: (e) => {
+      console.log('Task added:', taskData);
+      this.toastr.success('Task added successfully!', 'Success', {
+        toastClass: 'toast-success',
+        positionClass: 'toast-center-center',
+      });
+      this.showForm = false;
+      this.loadTask(); // Ensure change detection
+      this.taskForm.reset();
+    },
+    error: (err) => {
+      this.toastr.error('Failed to add task!', 'Error', {
+        toastClass: 'toast-error',
+        positionClass: 'toast-center-center',
+      });
+      console.log(err);
+    },
+  });
+}
+
+  updateTask(): void {
+    if(this.editingTaskId === null) return;
+
+    const updatedData = { id: this.editingTaskId, ...this.taskForm.value};
+    this.taskService.updateTask(this.editingTaskId,updatedData).subscribe({
+    next: (e) => {
+      console.log('Task updated:', e);
+      this.toastr.success('Task updated successfully!', 'Updated', {
+        toastClass: 'toast-success',
+        positionClass: 'toast-center-center',
+      });
+      this.loadTask();
+      this.taskForm.reset();
+      this.editingTaskId=null;
+      this.showForm = false;
+    },
+    error: (err) => {
+      this.toastr.error('Failed to update task!', 'Error', {
+        toastClass: 'toast-error',
+        positionClass: 'toast-center-center',
+      });
+      console.log(err);
+    }
+  });
+  }
+
+  onDelete(id: number) {
+    if (confirm('Are you sure you want to delete this task?')) {
+      this.taskService.deleteTask(id).subscribe({
+        next: (e) => {
+          console.log('Task deleted:', e);
+          this.tasks = this.tasks.filter(task => task.id !== id);
+          this.toastr.success('Task deleted successfully!', 'Deleted', {
+            toastClass: 'toast-success',
+            positionClass: 'toast-center-center',
+          });
+        },
+        error: (err) => {
+          this.toastr.error('Failed to delete task!', 'Error', {
+            toastClass: 'toast-error',
+            positionClass: 'toast-center-center',
+          });
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  loadTask(): void {
+    this.taskService.getAllTasks().subscribe({
+      next: (data) => {
+        this.tasks = data;
+      },
+      error: (err) => {
+        console.error('Failed to load tasks:', err);
+      }
+    });
+    // this.taskService.getAllTasks().subscribe(t => this.tasks = t);
     this.taskService.getEmployees().subscribe(e => this.employees = e);
     this.taskService.getProjects().subscribe(p => this.projects = p);
   }
+
 
   getEmployeeName(id: number): string {
     const emp = this.employees.find(e => e.id === id);
@@ -78,42 +178,9 @@ export class TaskManagementComponent implements OnInit {
     return proj ? proj.name : 'Unknown';
   }
 
-
-  onSubmit() {
-    if (this.taskForm.invalid) return;
-
-    const task: Task = {
-      ...this.taskForm.value,
-      id: this.editingTask?.id
-    };
-
-    if (this.editingTask && task.id != null) {
-      this.taskService.updateTask(task.id, task).subscribe(() => {
-        this.loadInitialData();
-        this.resetForm();
-      });
-    } else {
-      this.taskService.createTask(task).subscribe(() => {
-        this.loadInitialData();
-        this.resetForm();
-      });
-    }
-  }
-
-  onEdit(task: Task) {
-    this.taskForm.patchValue(task);
-    this.editingTask = task;
-  }
-
-  onDelete(id: number) {
-    if (confirm('Delete task?')) {
-      this.taskService.deleteTask(id).subscribe(() => this.loadInitialData());
-    }
-  }
-
   resetForm() {
     this.taskForm.reset({ status: 'To Do' });
-    this.editingTask = null;
+    this.editingTaskId = null;
   }
 }
 

@@ -45,39 +45,6 @@ export class EmployeeManagementComponent implements OnInit {
       }
     });
   }
-  createEmployee(): void {
-    if (this.employeeForm.invalid) return;
-
-    const newEmployee: Employee = this.employeeForm.value;
-
-    this.employeeService.createEmployee(newEmployee).subscribe({
-      next: (e) => {
-        console.log('e', e);
-
-        this.toastr.success('Employee created successfully', 'Success', {
-          toastClass: 'toast-success',
-          closeButton: true,
-          timeOut: 3000,
-          progressBar: true,
-          positionClass: 'toast-top-right'
-        });
-
-        this.loadEmployees(); // <-- Refresh list
-        this.resetForm();
-        this.showForm = false;
-      },
-      error: (err) => {
-        this.toastr.error('Failed to create employee', 'Error'),{
-          toastClass: 'toast-error',
-          closeButton: true,
-          timeOut: 3000,
-          progressBar: true,
-          positionClass: 'toast-top-right'
-        }
-        console.error(err);
-      }
-    });
-  }
 
   get formControls() {
     return this.employeeForm.controls;
@@ -100,6 +67,33 @@ export class EmployeeManagementComponent implements OnInit {
     }
   }
 
+  createEmployee(): void {
+    if (this.employeeForm.invalid) return;
+
+    const newEmployee: Employee = this.employeeForm.value;
+
+    this.employeeService.createEmployee(newEmployee).subscribe({
+      next: (e) => {
+        console.log('e', e);
+
+        this.toastr.success('Employee created successfully', 'Success', {
+          toastClass: 'toast-success',
+          positionClass: 'toast-center-center',
+        });
+
+        this.loadEmployees(); // <-- Refresh list
+        this.resetForm();
+        this.showForm = false;
+      },
+      error: (err) => {
+        this.toastr.error('Failed to create employee', 'Error', {
+          toastClass: 'toast-error',
+          positionClass: 'toast-center-center',
+        });
+        console.error(err);
+      }
+    });
+  }
 
   updateEmployee(): void {
     if (this.selectedEmployeeId === null) return;
@@ -114,10 +108,7 @@ export class EmployeeManagementComponent implements OnInit {
         console.log('e', e);
         this.toastr.success('Employee updated successfully', 'Success', {
           toastClass: 'toast-success',
-          closeButton: true,
-          timeOut: 3000,
-          progressBar: true,
-          positionClass: 'toast-top-right'
+          positionClass: 'toast-center-center',
         });
 
         this.loadEmployees(); // <-- Refresh list
@@ -126,13 +117,10 @@ export class EmployeeManagementComponent implements OnInit {
         this.showForm = false;
       },
       error: (err) => {
-        this.toastr.error('Failed to update employee', 'Error'),{
+        this.toastr.error('Failed to update employee', 'Error',{
           toastClass: 'toast-error',
-          closeButton: true,
-          timeOut: 3000,
-          progressBar: true,
-          positionClass: 'toast-top-right'
-        }
+          positionClass: 'toast-center-center',
+        });
         console.error(err);
       }
     });
@@ -152,20 +140,14 @@ export class EmployeeManagementComponent implements OnInit {
           this.employees = this.employees.filter(emp => emp.id !== id);
           this.toastr.success('Employee deleted successfully', 'Success', {
           toastClass: 'toast-success',
-          closeButton: true,
-          timeOut: 3000,
-          progressBar: true,
-          positionClass: 'toast-top-right'
+          positionClass: 'toast-center-center',
           });
         },
         error: (err) => {
-          this.toastr.error('Failed to delete employee', 'Error'),{
+          this.toastr.error('Failed to delete employee', 'Error',{
           toastClass: 'toast-error',
-          closeButton: true,
-          timeOut: 3000,
-          progressBar: true,
-          positionClass: 'toast-top-right'
-          };
+          positionClass: 'toast-center-center',
+          });
           console.error(err);
         }
       });

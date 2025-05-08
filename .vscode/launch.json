@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "MainVerticle",
+            "request": "launch",
+            "mainClass": "com.example.MainVerticle",
+            "projectName": "employee-management"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

@@ -75,54 +75,73 @@ export class ProjectManagementComponent implements OnInit {
 
   addProjects(): void {
     const projectData = this.projectForm.value;
-    this.projectsService.createProject(projectData).subscribe((e) => {
-      console.log('Project created:', e);
-      this.showForm = false;
-      this.loadProjects();
-      this.projectForm.reset();
-      this.toastr.success('Project created successfully', 'Created!', {
-        toastClass: 'custom-toast',
-        closeButton: true,
-        timeOut: 3000,
-        progressBar: true,
-        positionClass: 'toast-top-right'
-      });
+    this.projectsService.createProject(projectData).subscribe({
+      next: (e: any) => {
+        console.log('Project created:', e);
+
+        this.toastr.success('Project added successfully!', 'Success', {
+          toastClass: 'toast-success',
+          positionClass: 'toast-center-center',
+        });
+        this.showForm = false;
+        this.loadProjects();
+        this.projectForm.reset();
+      },
+      error: (err: any) => {
+        this.toastr.error('Failed to add project!', 'Error', {
+          toastClass: 'toast-error',
+          positionClass: 'toast-center-center',
+        });
+        console.error(err);
+      }
     });
   }
+
 
   updateProject(): void {
     if (this.editingProjectId === null) return;
 
     const updatedData = { id: this.editingProjectId, ...this.projectForm.value };
-    this.projectsService.updateProject(this.editingProjectId, updatedData).subscribe((e) => {
+    this.projectsService.updateProject(this.editingProjectId, updatedData).subscribe({
+      next: (e) => {
       console.log('Project updated:', e);
-
+      this.toastr.success('Project updated successfully!', 'Updated', {
+        toastClass: 'toast-success',
+        positionClass: 'toast-center-center',
+      });
       this.loadProjects();
       this.projectForm.reset();
       this.editingProjectId = null;
       this.showForm = false;
-      this.toastr.success('Project updated successfully!', 'Updated', {
-        toastClass: 'custom-toast',
-        closeButton: true,
-        timeOut: 3000,
-        progressBar: true,
-        positionClass: 'toast-top-right'
-
-      });
+      },
+      error: (err) => {
+        this.toastr.error('Failed to update project', 'Error', {
+          toastClass: 'toast-error',
+          positionClass: 'toast-center-center',
+        });
+        console.error(err);
+      }
     });
   }
 
   onDelete(id: number): void {
     if (confirm('Are you sure you want to delete this project?')) {
-      this.projectsService.deleteProject(id).subscribe(() => {
-        this.loadProjects();
-        this.toastr.info('Project deleted successfully!', 'Deleted', {
-          toastClass: 'custom-toast',
-          closeButton: true,
-          timeOut: 3000,
-          progressBar: true,
-          positionClass: 'toast-top-right'
-        });
+      this.projectsService.deleteProject(id).subscribe({
+        next: (e: any) => {
+          console.log('Project deleted:', e);
+          this.projects = this.projects.filter(project => project.id !== id);
+          this.toastr.success('Project deleted successfully!', 'Deleted', {
+            toastClass: 'toast-success',
+            positionClass: 'toast-center-center',
+          });
+        },
+        error: (err: any) => {
+          this.toastr.error('Failed to delete project', 'Error', {
+            toastClass: 'toast-error',
+            positionClass: 'toast-center-center',
+          });
+          console.error(err);
+        }
       });
     }
   }

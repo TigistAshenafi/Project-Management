@@ -11,6 +11,7 @@ import { ProjectManagementComponent } from './project-management/project-managem
 import { TaskManagementComponent } from './task-management/task-management.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { EmployeeManagementComponent } from './employee-management/employee-management.component';
+import { TimeLogManagementComponent } from './time-log-management/time-log-management.component';
 
 
 export const routes: Routes = [
@@ -30,6 +31,7 @@ export const routes: Routes = [
         canActivate: [RoleGuard],
         data: { role: 'admin' }
       },
+      {path: 'timelog', component: TimeLogManagementComponent},
       { path: '', redirectTo: 'employees', pathMatch: 'full' }
     ]
   },

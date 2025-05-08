@@ -1,9 +1,11 @@
 <div class="task-management">
   <h2>Task Management</h2>
 
-  <button (click)="toggleForm()">Add Task</button>
+  <button class="btn btn-success" (click)="toggleForm()">
+    {{ editingTaskId ? 'Update Task' : 'Add Task' }}
+  </button>
 
-  <form *ngIf="showForm" [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="task-form">
+  <form *ngIf="showForm" [formGroup]="taskForm" (ngSubmit)="editingTaskId ? updateTask() : addTasks()" class="task-form">
     <div>
       <label>Title</label>
       <input formControlName="title" type="text" required />
@@ -42,11 +44,12 @@
       <input formControlName="dueDate" type="date" required />
     </div>
 
-    <button type="submit">{{ editingTask ? 'Update Task' : 'Add Task' }}</button>
-    <button class="btn btn-primary" type="button" (click)="toggleForm()">Clear</button>
+    <button class="btn btn-primary" type="submit">{{ editingTaskId ? 'Update Task' : 'Add Task' }} </button>
+    <button class="btn btn-secondary" type="button" *ngIf="editingTaskId" (click)="toggleForm()"> Clear </button>
   </form>
 
-  <h3>Task List</h3>
+  <div class="task-list">
+  <h3 class="list-title">Task List</h3>
   <table>
     <thead>
       <tr>
@@ -66,12 +69,13 @@
         <td>{{ task.status }}</td>
         <td>{{ getProjectName(task.projectId) }}</td>
         <td>{{ getEmployeeName(task.employeeId) }}</td>
-        {{ task.dueDate }}
-        <td>
-          <button (click)="onEdit(task)">Edit</button>
-          <button (click)="onDelete(task.id ?? 0)">Delete</button>
+        <td>{{ task.dueDate | date: 'shortDate' }}</td>
+        <td class="item-buttons">
+          <button class="btn btn-warning" (click)="onEdit(task)">Edit</button>
+          <button class="btn btn-danger" *ngIf="task.id" (click)="onDelete(task.id)">Delete</button>
         </td>
       </tr>
     </tbody>
   </table>
+</div>
 </div>

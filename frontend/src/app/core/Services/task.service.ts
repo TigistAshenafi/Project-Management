@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Task } from '../models/task.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Employee } from '../models/employee.model';
+import { Project } from '../models/project.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
@@ -10,27 +11,33 @@ export class TaskService {
 
   constructor(private http: HttpClient) {}
 
-  getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.baseUrl}/tasks`);
+  getAllTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.baseUrl}/tasks`, this.getAuth());
   }
 
-  createTask(task: Task): Observable<Task> {
-    return this.http.post<Task>(`${this.baseUrl}/tasks`, task);
+  createTask(task: Partial<Task>): Observable<Task> {
+    return this.http.post<Task>(`${this.baseUrl}/tasks`, task,this.getAuth());
   }
 
   updateTask(id: number, task: Task): Observable<Task> {
-    return this.http.put<Task>(`${this.baseUrl}/tasks/${id}`, task);
+    return this.http.put<Task>(`${this.baseUrl}/tasks/${id}`, task, this.getAuth());
   }
 
   deleteTask(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/tasks/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/tasks/${id}`, this.getAuth());
+  }
+  getEmployees(): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.baseUrl}/employees`);
   }
 
-  getEmployees(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/employees`);
+  getProjects(): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.baseUrl}/projects`);
   }
 
-  getProjects(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/projects`);
+  private getAuth() {
+    return {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    };
   }
 }
+

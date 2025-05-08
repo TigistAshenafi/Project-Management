@@ -18,8 +18,6 @@ public class TaskHandler {
         dbClient.query("SELECT * FROM tasks", res -> {
             if (res.succeeded()) {
                 List<JsonObject> rows = res.result().getRows();
-
-                // Convert LocalDateTime fields to string if any
                 List<JsonObject> processedRows = rows.stream().map(row -> {
                     JsonObject json = new JsonObject();
                     row.forEach(entry -> {
@@ -53,12 +51,13 @@ public class TaskHandler {
         String title = body.getString("title");
         String description = body.getString("description");
         String status = body.getString("status");
-        Integer projectId = body.getInteger("projectId");
+        Integer project = body.getInteger("projectId");
         Integer employeeId = body.getInteger("employeeId");
         String dueDate = body.getString("dueDate");
+
     
-        String query = "INSERT INTO tasks (title, description, status, project_id, assigned_to, dueDate) VALUES (?, ?, ?, ?, ?, ?)";
-        JsonArray params = new JsonArray().add(title).add(description).add(status).add(projectId).add(employeeId).add(dueDate);
+        String query ="INSERT INTO tasks (title, description, status, project_id, assigned_to, due_date) VALUES (?, ?, ?, ?, ?, ?)";
+        JsonArray params = new JsonArray().add(title).add(description).add(status).add(project).add(employeeId).add(dueDate);
     
         dbClient.updateWithParams(query, params, res -> {
             if (res.succeeded()) {
@@ -67,18 +66,20 @@ public class TaskHandler {
                        .putHeader("Content-Type", "application/json")
                        .end(new JsonObject().put("message", "Task created successfully").encode());
             } else {
-                context.fail(res.cause());
+                // 🔥 Log the actual SQL error
+                Throwable cause = res.cause();
+                cause.printStackTrace();  // ← This will print the stack trace in your terminal
+                context.response().setStatusCode(500).end("Database error: " + cause.getMessage());
             }
         });
     }
-    
     
     public void updateTask(RoutingContext context) {
         String id = context.pathParam("id");
         JsonObject task = context.body().asJsonObject();
 
         dbClient.updateWithParams(
-            "UPDATE tasks SET title = ?, description = ?, status = ?, project_id = ?, assigned_to = ?, dueDate = ? WHERE id = ?",
+            "UPDATE tasks SET title = ?, description = ?, status = ?, project_id = ?, assigned_to = ?, due_date = ? WHERE id = ?",
             new JsonArray()
                 .add(task.getString("title"))
                 .add(task.getString("description"))

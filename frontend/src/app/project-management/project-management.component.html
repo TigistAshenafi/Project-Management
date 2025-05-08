@@ -1,12 +1,12 @@
 <div class="project-container">
   <!-- Toggle Add/Edit Button -->
   <button class="btn btn-success" (click)="toggleAddForm()" id="btn">
-    {{ editingProjectId ? '✏️ Editing Project' : (showForm ? '- Cancel Add' : '+ Add Project') }}
+    {{ editingProjectId ? ' Editing Project' : (showForm ? '- Cancel Add' : '+ Add Project') }}
   </button>
 
   <!-- Show form only if showForm is true -->
   <form *ngIf="showForm" [formGroup]="projectForm" (ngSubmit)="editingProjectId ? updateProject() : addProjects()" class="project-form">
-    <h2 class="form-title">{{ editingProjectId ? '✏️ Edit Project' : '➕ Add New Project' }}</h2>
+    <h2 class="form-title">{{ editingProjectId ? ' Edit Project' : '- Add New Project' }}</h2>
 
     <div class="form-group">
       <label>Project Name</label>
@@ -27,7 +27,7 @@
       </button>
     </div>
   </form>
-<h3 class="list-title">📋 Project List</h3>
+<h3 class="list-title"> Project List</h3>
 <table class="project-list">
   <thead>
     <tr>

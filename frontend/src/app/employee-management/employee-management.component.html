@@ -1,12 +1,12 @@
 <div class="employee-container">
   <!-- Toggle Add/Edit Button -->
   <button class="btn btn-success" (click)="toggleAddForm()" id="btn">
-    {{ editMode ? '✏️ Editing Employee' : (showForm ? '- Cancel Add' : '+ Add Employee') }}
+    {{ editMode ? ' Editing Employee' : (showForm ? '- Cancel Add' : '+ Add Employee') }}
   </button>
 
   <!-- Show form only if showForm is true -->
   <form *ngIf="showForm" [formGroup]="employeeForm" (ngSubmit)=" selectedEmployeeId ? updateEmployee() : createEmployee()" class="employee-form">
-    <h2 class="form-title">{{ editMode ? '✏️ Edit Employee' : '➕ Add New Employee' }}</h2>
+    <h2 class="form-title">{{ editMode ? ' Edit Employee' : '+ Add New Employee' }}</h2>
 
     <div class="form-group">
       <label for="name">Name</label>
@@ -44,7 +44,7 @@
   </form>
 
   <div class="employee-list">
-    <h3 class="list-title">📋 Employee List</h3>
+    <h3 class="list-title"> Employee List</h3>
     <table class="employee-list">
       <thead>
         <tr>
