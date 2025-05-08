@@ -9,7 +9,6 @@ import { RoleGuard } from './role.guard';
 import { AuthGuard } from './auth.guard';
 import { ProjectManagementComponent } from './project-management/project-management.component';
 import { TaskManagementComponent } from './task-management/task-management.component';
-import { NavbarComponent } from './shared/navbar/navbar.component';
 import { EmployeeManagementComponent } from './employee-management/employee-management.component';
 import { TimeLogManagementComponent } from './time-log-management/time-log-management.component';
 

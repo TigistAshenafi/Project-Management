@@ -27,11 +27,12 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let entry of logs">
+              <tr *ngFor="let entry of logs | paginate: { itemsPerPage: 5, currentPage: currentPage}">
                 <td>{{ entry.date }}</td>
                 <td>{{ entry.hours }}</td>
                 <td>{{ entry.description }}</td>
               </tr>
             </tbody>
           </table>
+          <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
         </div>

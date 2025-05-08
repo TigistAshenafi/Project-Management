@@ -14,6 +14,7 @@ export class EmployeeManagementComponent implements OnInit {
   employees: Employee[] = [];
   showForm: boolean = false;
   editMode: boolean = false;
+  currentPage: number = 1;
   selectedEmployeeId: number | null = null;
 
   constructor(

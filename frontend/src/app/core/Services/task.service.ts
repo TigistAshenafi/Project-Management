@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 import { Task } from '../models/task.model';
 import { Employee } from '../models/employee.model';
 import { Project } from '../models/project.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
-  private baseUrl = 'http://localhost:8081/api';
+  private baseUrl = `${environment.ApiUrl}/api`;
 
   constructor(private http: HttpClient) {}
 
@@ -19,8 +20,10 @@ export class TaskService {
     return this.http.post<Task>(`${this.baseUrl}/tasks`, task,this.getAuth());
   }
 
-  updateTask(id: number, task: Task): Observable<Task> {
-    return this.http.put<Task>(`${this.baseUrl}/tasks/${id}`, task, this.getAuth());
+  updateTask(id: number, taskData: any) {
+    return this.http.put(`${this.baseUrl}/${id}`, taskData, {
+      headers: this.getAuth().headers
+    });
   }
 
   deleteTask(id: number): Observable<void> {

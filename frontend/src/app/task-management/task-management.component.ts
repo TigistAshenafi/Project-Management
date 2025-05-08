@@ -19,6 +19,7 @@ export class TaskManagementComponent implements OnInit {
   editingTaskId: number | null = null;
   showForm = false;
   statuses = ['To Do', 'In Progress', 'Done'];
+  currentPage = 1;
 
   constructor(private fb: FormBuilder,
      private taskService: TaskService,
@@ -26,13 +27,14 @@ export class TaskManagementComponent implements OnInit {
 ) {}
 
   ngOnInit() {
+
     this.taskForm = this.fb.group({
       title: ['', Validators.required],
       description: [''],
       status: ['To Do', Validators.required],
-      projectId: ['', Validators.required],
-      employeeId: ['', Validators.required],
-      dueDate: ['', Validators.required],
+      project_id: ['', Validators.required],
+      assigned_to: ['', Validators.required],
+      due_date: ['', Validators.required],
     });
     this.loadTask();
   }
@@ -66,7 +68,7 @@ export class TaskManagementComponent implements OnInit {
       this.onCancelEdit();
     } else {
     this.taskForm.patchValue(task);
-    this.editingTaskId = task.id ?? null;
+    this.editingTaskId = task.id;
     this.showForm = true;
   }
 }
@@ -80,8 +82,8 @@ onCancelEdit(): void {
 addTasks(): void {
   const taskData = {
     ...this.taskForm.value,
-    projectId: Number(this.taskForm.value.projectId) || null,
-    employeeId: Number(this.taskForm.value.employeeId) || null,
+    project_id: Number(this.taskForm.value.project_id) || null,
+    assigned_to: Number(this.taskForm.value.assigned_to) || null,
   };
 
   this.taskService.createTask(taskData).subscribe({
@@ -106,10 +108,8 @@ addTasks(): void {
 }
 
   updateTask(): void {
-    if(this.editingTaskId === null) return;
-
-    const updatedData = { id: this.editingTaskId, ...this.taskForm.value};
-    this.taskService.updateTask(this.editingTaskId,updatedData).subscribe({
+    if(!this.editingTaskId || this.taskForm.invalid) return;
+    this.taskService.updateTask(this.editingTaskId,this.taskForm.value).subscribe({
     next: (e) => {
       console.log('Task updated:', e);
       this.toastr.success('Task updated successfully!', 'Updated', {

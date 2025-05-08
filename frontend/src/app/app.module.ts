@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { RoleAssignmentComponent } from './role-assignment/role-assignment.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { SidebarComponent } from './sidebar/sidebar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ErrorComponent } from './error/error.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -18,26 +17,25 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ProjectManagementComponent } from './project-management/project-management.component';
 import { TaskManagementComponent } from './task-management/task-management.component';
-import { NavbarComponent } from './shared/navbar/navbar.component';
 import { EmployeeManagementComponent } from './employee-management/employee-management.component';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { TimeLogManagementComponent } from './time-log-management/time-log-management.component';
+import { LayoutComponent } from './layout/layout.component';
 @NgModule({
   declarations: [
     AppComponent,
     RoleAssignmentComponent,
     LoginComponent,
     RegisterComponent,
-    SidebarComponent,
     DashboardComponent,
     ErrorComponent,
     ProjectManagementComponent,
     TaskManagementComponent,
-    NavbarComponent,
     EmployeeManagementComponent,
     TimeLogManagementComponent,
+    LayoutComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,7 +46,7 @@ import { TimeLogManagementComponent } from './time-log-management/time-log-manag
       closeButton: true,                  // Show a close (X) button
       tapToDismiss: true,                 // Dismiss on click
       newestOnTop: true
-    }),BrowserAnimationsModule,MatSnackBarModule
+    }),BrowserAnimationsModule,NgxPaginationModule
   ],
   providers: [
     AuthService,

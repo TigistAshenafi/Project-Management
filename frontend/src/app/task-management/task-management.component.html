@@ -25,7 +25,7 @@
 
     <div>
       <label>Project</label>
-      <select formControlName="projectId">
+      <select formControlName="project_id">
         <option value="" disabled>Select Project</option>
         <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
       </select>
@@ -33,7 +33,7 @@
 
     <div>
       <label>Assigned to</label>
-      <select formControlName="employeeId">
+      <select formControlName="assigned_to">
         <option value="" disabled>Select Employee</option>
         <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
       </select>
@@ -41,7 +41,7 @@
 
     <div>
       <label>Due Date</label>
-      <input formControlName="dueDate" type="date" required />
+      <input formControlName="due_date" type="date" required />
     </div>
 
     <button class="btn btn-primary" type="submit">{{ editingTaskId ? 'Update Task' : 'Add Task' }} </button>
@@ -63,13 +63,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let task of tasks">
+      <tr *ngFor="let task of tasks | paginate: { itemsPerPage: 5, currentPage: currentPage}">
         <td>{{ task.title }}</td>
         <td>{{ task.description }}</td>
         <td>{{ task.status }}</td>
-        <td>{{ getProjectName(task.projectId) }}</td>
-        <td>{{ getEmployeeName(task.employeeId) }}</td>
-        <td>{{ task.dueDate | date: 'shortDate' }}</td>
+        <td>{{ getProjectName(task.project_id) }}</td>
+        <td>{{ getEmployeeName(task.assigned_to) }}</td>
+        <td>{{ task.due_date | date: 'shortDate' }}</td>
         <td class="item-buttons">
           <button class="btn btn-warning" (click)="onEdit(task)">Edit</button>
           <button class="btn btn-danger" *ngIf="task.id" (click)="onDelete(task.id)">Delete</button>
@@ -77,5 +77,6 @@
       </tr>
     </tbody>
   </table>
+  <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
 </div>
 </div>

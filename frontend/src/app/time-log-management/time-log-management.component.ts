@@ -15,7 +15,7 @@ date: '',
 hours: 0,
 description: ''
 };
-
+currentPage = 1;
 logs: TimeLog[] = [];
 
 constructor(private timeLogService: TimeLogService) {}

@@ -37,7 +37,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let project of projects">
+    <tr *ngFor="let project of projects | paginate: { itemsPerPage: 5, currentPage: currentPage} ">
       <td>{{ project.name }}</td>
       <td>{{ project.description }}</td>
       <td class="item-buttons">
@@ -47,4 +47,5 @@
     </tr>
   </tbody>
   </table>
+  <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
 </div>

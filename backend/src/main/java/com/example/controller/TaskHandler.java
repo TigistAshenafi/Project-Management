@@ -1,11 +1,17 @@
 package com.example.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.web.RoutingContext;
+// import java.time.*;
+import java.sql.Timestamp;
 
 public class TaskHandler {
     private final JDBCClient dbClient;
@@ -13,33 +19,42 @@ public class TaskHandler {
     public TaskHandler(JDBCClient dbClient) {
         this.dbClient = dbClient;
     }
+public void getAllTask(RoutingContext context) {
+    dbClient.query("SELECT * FROM tasks", res -> {
+        if (res.succeeded()) {
+            List<JsonObject> rows = res.result().getRows();
+            List<JsonObject> processedRows = rows.stream().map(row -> {
+                JsonObject json = new JsonObject();
+                row.forEach(entry -> {
+                    Object value = entry.getValue();
+                    if (value instanceof LocalDateTime) {
+                        json.put(entry.getKey(), value.toString());
+                    } else if (value instanceof LocalDate) {
+                        json.put(entry.getKey(), value.toString());
+                    } else if (value instanceof LocalTime) {
+                        json.put(entry.getKey(), value.toString());
+                    } else if (value instanceof OffsetDateTime) {
+                        json.put(entry.getKey(), value.toString());
+                    } else if (value instanceof ZonedDateTime) {
+                        json.put(entry.getKey(), value.toString());
+                    } else if (value instanceof Timestamp) {
+                        json.put(entry.getKey(), ((Timestamp) value).toLocalDateTime().toString());
+                    } else {
+                        json.put(entry.getKey(), value);
+                    }
+                });
+                return json;
+            }).toList();
 
-    public void getAllTask(RoutingContext context) {
-        dbClient.query("SELECT * FROM tasks", res -> {
-            if (res.succeeded()) {
-                List<JsonObject> rows = res.result().getRows();
-                List<JsonObject> processedRows = rows.stream().map(row -> {
-                    JsonObject json = new JsonObject();
-                    row.forEach(entry -> {
-                        if (entry.getValue() instanceof LocalDateTime) {
-                            json.put(entry.getKey(), entry.getValue().toString());
-                        } else {
-                            json.put(entry.getKey(), entry.getValue());
-                        }
-                    });
-                    return json;
-                }).toList();
-
-                JsonArray jsonArray = new JsonArray(processedRows);
-                context.response()
-                    .putHeader("Content-Type", "application/json")
-                    .end(jsonArray.encodePrettily());
-            } else {
-                context.response().setStatusCode(500).end(res.cause().getMessage());
-            }
-        });
-    }
-
+            JsonArray jsonArray = new JsonArray(processedRows);
+            context.response()
+                .putHeader("Content-Type", "application/json")
+                .end(jsonArray.encodePrettily());
+        } else {
+            context.response().setStatusCode(500).end(res.cause().getMessage());
+        }
+    });
+}
     public void createTask(RoutingContext context) {
         JsonObject body = context.body().asJsonObject();
     
@@ -51,13 +66,13 @@ public class TaskHandler {
         String title = body.getString("title");
         String description = body.getString("description");
         String status = body.getString("status");
-        Integer project = body.getInteger("projectId");
-        Integer employeeId = body.getInteger("employeeId");
-        String dueDate = body.getString("dueDate");
+        Integer project_id = body.getInteger("project_id");
+        Integer employee_id = body.getInteger("assigned_to");
+        String due_date = body.getString("due_date");
 
     
         String query ="INSERT INTO tasks (title, description, status, project_id, assigned_to, due_date) VALUES (?, ?, ?, ?, ?, ?)";
-        JsonArray params = new JsonArray().add(title).add(description).add(status).add(project).add(employeeId).add(dueDate);
+        JsonArray params = new JsonArray().add(title).add(description).add(status).add(project_id).add(employee_id).add(due_date);
     
         dbClient.updateWithParams(query, params, res -> {
             if (res.succeeded()) {
@@ -66,7 +81,6 @@ public class TaskHandler {
                        .putHeader("Content-Type", "application/json")
                        .end(new JsonObject().put("message", "Task created successfully").encode());
             } else {
-                // 🔥 Log the actual SQL error
                 Throwable cause = res.cause();
                 cause.printStackTrace();  // ← This will print the stack trace in your terminal
                 context.response().setStatusCode(500).end("Database error: " + cause.getMessage());
@@ -84,9 +98,9 @@ public class TaskHandler {
                 .add(task.getString("title"))
                 .add(task.getString("description"))
                 .add(task.getString("status"))
-                .add(task.getInteger("projectId"))
-                .add(task.getInteger("employeeId"))
-                .add(task.getString("dueDate"))
+                .add(task.getInteger("project_id"))
+                .add(task.getInteger("assigned_to"))
+                .add(task.getString("due_date"))
                 .add(id),
             res -> {
                 if (res.succeeded()) {

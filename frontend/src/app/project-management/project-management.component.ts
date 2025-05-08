@@ -14,6 +14,7 @@ export class ProjectManagementComponent implements OnInit {
   projects: Project[] = [];
   editingProjectId: number | null = null;
   showForm = false;
+  currentPage = 1;
 
   constructor(
     private fb: FormBuilder,
