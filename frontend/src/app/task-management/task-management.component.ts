@@ -20,6 +20,7 @@ export class TaskManagementComponent implements OnInit {
   showForm = false;
   statuses = ['To Do', 'In Progress', 'Done'];
   currentPage = 1;
+  minDate!: string;
 
   constructor(private fb: FormBuilder,
      private taskService: TaskService,
@@ -27,7 +28,8 @@ export class TaskManagementComponent implements OnInit {
 ) {}
 
   ngOnInit() {
-
+    const today = new Date();
+    this.minDate = today.toISOString().split('T')[0];
     this.taskForm = this.fb.group({
       title: ['', Validators.required],
       description: [''],

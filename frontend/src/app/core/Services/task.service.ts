@@ -21,7 +21,7 @@ export class TaskService {
   }
 
   updateTask(id: number, taskData: any) {
-    return this.http.put(`${this.baseUrl}/${id}`, taskData, {
+    return this.http.put(this.baseUrl+"/tasks/"+id, taskData, {
       headers: this.getAuth().headers
     });
   }

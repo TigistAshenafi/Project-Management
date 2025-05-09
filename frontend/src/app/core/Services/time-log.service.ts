@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TimeLog } from '../models/timeLog.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
 providedIn: 'root'
 })
 export class TimeLogService {
-private apiUrl = 'http://localhost:8081/time-logs'; // Adjust port and path to match Vert.x backend
+private apiUrl = `${environment.ApiUrl}/api/time-logs`; // Adjust port and path to match Vert.x backend
 
 constructor(private http: HttpClient) {}
 
@@ -24,5 +25,9 @@ return this.http.get<TimeLog[]>(`${this.apiUrl}/${taskId}`);
 // (Optional) Get all logs by employee
 getLogsByUser(userId: number): Observable<TimeLog[]> {
 return this.http.get<TimeLog[]>(`${this.apiUrl}?userId=${userId}`);
+}
+
+getAllLogs(): Observable<TimeLog[]> {
+  return this.http.get<TimeLog[]>(`${this.apiUrl}`);
 }
 }

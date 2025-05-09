@@ -9,18 +9,21 @@ styleUrls: ['./time-log-management.component.css']
 })
 export class TimeLogManagementComponent implements OnInit {
 log: TimeLog = {
-user_id: 1, // Example default; should come from logged-in user or form
-task_id: 42, // Set via context (e.g. selected task)
+user_id: 1,
+task_id: 42, 
 date: '',
 hours: 0,
 description: ''
 };
 currentPage = 1;
 logs: TimeLog[] = [];
+minDate! : string;
 
 constructor(private timeLogService: TimeLogService) {}
 
 ngOnInit(): void {
+  const today = new Date();
+  this.minDate = today.toISOString().split('T')[0];
 this.fetchLogs();
 }
 

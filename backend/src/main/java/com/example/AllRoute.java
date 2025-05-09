@@ -74,8 +74,10 @@ ctx.response()
         router.delete("/api/tasks/:id").handler(taskHandler::deleteTask);
 
         // Time-Log Routes
-        router.post("/api/time-log").handler(TimeLogHandler::createTimeLog);
-        router.get("/api/time-log").handler(TimeLogHandler::getAll);
+        router.post("/api/time-logs").handler(TimeLogHandler::createTimeLog);
+        router.get("/api/time-logs").handler(TimeLogHandler::getAll);
+        router.get("/api/time-logs/:taskId").handler(TimeLogHandler::getByTaskId);
+
         
         vertx.createHttpServer()
             .requestHandler(router)

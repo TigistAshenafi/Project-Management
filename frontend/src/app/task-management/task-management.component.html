@@ -41,7 +41,7 @@
 
     <div>
       <label>Due Date</label>
-      <input formControlName="due_date" type="date" required />
+      <input formControlName="due_date" type="date" [min]="minDate" required />
     </div>
 
     <button class="btn btn-primary" type="submit">{{ editingTaskId ? 'Update Task' : 'Add Task' }} </button>

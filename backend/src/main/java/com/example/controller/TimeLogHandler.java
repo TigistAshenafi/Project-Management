@@ -23,7 +23,7 @@ public class TimeLogHandler {
                         .add(body.getString("description")),
                     res -> {
                         if (res.succeeded()) {
-                            ctx.response().setStatusCode(201).end("Time entry created.");
+                            ctx.response().setStatusCode(201).end("Time log created.");
                         } else {
                             ctx.fail(500, res.cause());
                         }
@@ -36,8 +36,31 @@ public class TimeLogHandler {
         });
     }
 
+    public static void getByTaskId(RoutingContext ctx) {
+        String taskId = ctx.pathParam("taskId");
+    
+        String query = "SELECT * FROM time_logs WHERE task_id = ? ORDER BY date DESC";
+        ctx.vertx().eventBus().<SQLConnection>request("db.connection", null, reply -> {
+            if (reply.succeeded()) {
+                SQLConnection conn = reply.result().body();
+                conn.queryWithParams(query, new JsonArray().add(Integer.parseInt(taskId)), res -> {
+                    if (res.succeeded()) {
+                        ctx.response()
+                            .putHeader("Content-Type", "application/json")
+                            .end(Json.encodePrettily(res.result().getRows()));
+                    } else {
+                        ctx.fail(500, res.cause());
+                    }
+                    conn.close();
+                });
+            } else {
+                ctx.fail(500);
+            }
+        });
+    }    
+
     public static void getAll(RoutingContext ctx) {
-        String query = "SELECT * FROM time_entries ORDER BY date DESC";
+        String query = "SELECT * FROM time_logs ORDER BY date DESC";
         ctx.vertx().eventBus().<SQLConnection>request("db.connection", null, reply -> {
             if (reply.succeeded()) {
                 SQLConnection conn = reply.result().body();

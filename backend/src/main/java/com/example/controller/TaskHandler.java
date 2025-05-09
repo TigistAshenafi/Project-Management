@@ -76,10 +76,15 @@ public void getAllTask(RoutingContext context) {
     
         dbClient.updateWithParams(query, params, res -> {
             if (res.succeeded()) {
-                context.response()
-                       .setStatusCode(201)
-                       .putHeader("Content-Type", "application/json")
-                       .end(new JsonObject().put("message", "Task created successfully").encode());
+                long generatedId = res.result().getKeys().getLong(0); // Get auto-generated ID
+                        JsonObject responseJson = new JsonObject()
+                            .put("message", "Task added")
+                            .put("id", generatedId);
+    
+                        context.response()
+                            .setStatusCode(201)
+                            .putHeader("Content-Type", "application/json")
+                            .end(responseJson.encode());
             } else {
                 Throwable cause = res.cause();
                 cause.printStackTrace();  // ← This will print the stack trace in your terminal
@@ -98,13 +103,19 @@ public void getAllTask(RoutingContext context) {
                 .add(task.getString("title"))
                 .add(task.getString("description"))
                 .add(task.getString("status"))
-                .add(task.getInteger("project_id"))
-                .add(task.getInteger("assigned_to"))
+                .add(Integer.parseInt(task.getString("project_id")))
+                .add(Integer.parseInt(task.getString("assigned_to")))
                 .add(task.getString("due_date"))
                 .add(id),
             res -> {
                 if (res.succeeded()) {
-                    context.response().end("Task updated");
+                    JsonObject responseJson = new JsonObject()
+                    .put("message", "Task updated")
+                    .put("id", id);
+                    context.response()
+                    .setStatusCode(200)
+                    .putHeader("Content-Type", "application/json")
+                    .end(responseJson.encode());
                 } else {
                     context.fail(res.cause());
                 }

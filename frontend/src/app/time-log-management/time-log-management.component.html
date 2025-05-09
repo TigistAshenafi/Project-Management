@@ -3,7 +3,7 @@
   <form (ngSubmit)="submitLog()" class="form">
     <div>
       <label>Date</label>
-       <input type="date" [(ngModel)]="log.date" name="date" required />
+       <input type="date" [(ngModel)]="log.date" name="date" [min]="minDate" required />
       </div>
       <div>
          <label>Hours</label>
