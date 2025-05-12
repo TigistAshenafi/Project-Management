@@ -1,38 +1,46 @@
 <div class="container">
   <h2>Log Time</h2>
-  <form (ngSubmit)="submitLog()" class="form">
+  <form (ngSubmit)="submitLog()" #timeForm="ngForm" class="form">
     <div>
       <label>Date</label>
-       <input type="date" [(ngModel)]="log.date" name="date" [min]="minDate" required />
-      </div>
-      <div>
-         <label>Hours</label>
-          <input type="number" [(ngModel)]="log.hours" name="hours" required />
-        </div>
-        <div>
-          <label>Description</label>
-           <textarea [(ngModel)]="log.description" name="description">
-           </textarea>
-          </div>
-           <button type="submit">Log Time</button>
-          </form>
+      <input type="date" [(ngModel)]="log.date" name="date" [min]="minDate" required />
+    </div>
+    <div>
+      <label>Hours</label>
+      <input type="number" [(ngModel)]="log.hours" name="hours" min="0.1" step="0.1" required />
+    </div>
+    <div>
+      <label>Tasks</label>
+      <select [(ngModel)]="log.task_id" name="task_id" required>
+        <option value="" disabled>Select Task</option>
+        <option *ngFor="let task of tasks" [value]="task.id">{{ task.title }}</option>
+      </select>
+    </div>
+    <div>
+      <label>Description</label>
+      <textarea [(ngModel)]="log.description" name="description"></textarea>
+    </div>
+    <button class="btn" type="submit" [disabled]="!timeForm.form.valid">Log Time</button>
+  </form>
 
-          <h2 class="log-list-title">Time Logs</h2>
-          <table>
-             <thead>
-              <tr>
-                <th>Date</th>
-                <th>Hours</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let entry of logs | paginate: { itemsPerPage: 5, currentPage: currentPage}">
-                <td>{{ entry.date }}</td>
-                <td>{{ entry.hours }}</td>
-                <td>{{ entry.description }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
-        </div>
+  <h2>Time Logs</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Hours</th>
+        <th>Task</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let entry of logs | paginate : { itemsPerPage: 5, currentPage: currentPage }">
+        <td>{{ entry.date }}</td>
+        <td>{{ entry.hours }}</td>
+        <td>{{ getTaskTitle(entry.task_id) }}</td>
+        <td>{{ entry.description }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+</div>

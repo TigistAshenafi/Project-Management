@@ -27,7 +27,7 @@ public class AllRoute extends AbstractVerticle {
         this.employeeHandler = new EmployeeHandler(dbClient);
         this.projectHandler = new ProjectHandler(dbClient);
         this.taskHandler = new TaskHandler(dbClient);
-        this.timeLogHandler = new TimeLogHandler();
+        this.timeLogHandler = new TimeLogHandler(dbClient);
         this.jwtAuth = jwtAuth;
     }
 
@@ -74,9 +74,14 @@ ctx.response()
         router.delete("/api/tasks/:id").handler(taskHandler::deleteTask);
 
         // Time-Log Routes
-        router.post("/api/time-logs").handler(TimeLogHandler::createTimeLog);
-        router.get("/api/time-logs").handler(TimeLogHandler::getAll);
-        router.get("/api/time-logs/:taskId").handler(TimeLogHandler::getByTaskId);
+       router.post("/api/time-logs").handler(timeLogHandler::createTimeLog);
+router.get("/api/time-logs").handler(timeLogHandler::getAllTasks);
+router.get("/api/time-logs/:task_id").handler(timeLogHandler::getByTaskId);
+
+router.get("/api/time-logs").handler(timeLogHandler::getAllLogs);
+        router.route().handler(JWTAuthHandler.create(jwtAuth));
+
+
 
         
         vertx.createHttpServer()
