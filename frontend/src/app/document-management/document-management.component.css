@@ -1,0 +1,101 @@
+.container {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.upload-section {
+  margin-bottom: 30px;
+}
+
+.file-input {
+  margin-right: 10px;
+}
+
+.btn {
+  padding: 8px 14px;
+  margin-right: 5px;
+  background-color:  #2ecc71db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color:#27ae60;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.upload-btn {
+  background-color: #2ecc71;
+}
+
+.upload-btn:hover {
+  background-color: #27ae60;
+}
+
+.document-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.document-table th,
+.document-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.document-table th {
+  background-color: #f2f2f2;
+}
+
+pagination-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.pagination-controls ::ng-deep .ngx-pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+}
+
+.pagination-controls ::ng-deep .ngx-pagination li {
+  margin: 0 4px;
+}
+
+.pagination-controls ::ng-deep .ngx-pagination a {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.pagination-controls ::ng-deep .ngx-pagination a:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.pagination-controls ::ng-deep .ngx-pagination .current {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}

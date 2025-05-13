@@ -34,11 +34,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let entry of logs | paginate : { itemsPerPage: 5, currentPage: currentPage }">
-        <td>{{ entry.date }}</td>
-        <td>{{ entry.hours }}</td>
-        <td>{{ getTaskTitle(entry.task_id) }}</td>
-        <td>{{ entry.description }}</td>
+      <tr *ngFor="let log of logs | paginate : { itemsPerPage: 5, currentPage: currentPage }">
+        <td>{{ log.date }}</td>
+        <td>{{ log.hours }}</td>
+        <td>{{ getTaskTitle(log.task_id) }}</td>
+        <td>{{ log.description }}</td>
       </tr>
     </tbody>
   </table>

@@ -164,7 +164,6 @@ addTasks(): void {
         console.error('Failed to load tasks:', err);
       }
     });
-    // this.taskService.getAllTasks().subscribe(t => this.tasks = t);
     this.taskService.getEmployees().subscribe(e => this.employees = e);
     this.taskService.getProjects().subscribe(p => this.projects = p);
   }

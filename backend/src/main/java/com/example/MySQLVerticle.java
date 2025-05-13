@@ -102,6 +102,17 @@ public class MySQLVerticle extends AbstractVerticle {
                                  FOREIGN KEY (user_id) REFERENCES users(id),
                                  FOREIGN KEY (task_id) REFERENCES tasks(id));
                                  """, promise);
+                         connection.execute("""
+                                 CREATE TABLE documents ( 
+                                 id INT PRIMARY KEY AUTO_INCREMENT,
+                                 project_id INT,
+                                 file_name VARCHAR(255),
+                                 file_path VARCHAR(255),
+                                 upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+                                 );
+                                 """,promise);
+
                 }));
     }
 

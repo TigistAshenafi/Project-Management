@@ -3,24 +3,27 @@ package com.example;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.JWTAuthHandler;
 import io.vertx.ext.jdbc.JDBCClient;
-import java.util.Set;
+import io.vertx.ext.sql.SQLClient;
 
-import com.example.controller.EmployeeHandler;
-import com.example.controller.ProjectHandler;
-import com.example.controller.TaskHandler;
-import com.example.controller.TimeLogHandler;
+import java.util.Set;
+import com.example.controller.*;
 
 public class AllRoute extends AbstractVerticle {
+    private static io.vertx.ext.sql.SQLClient sqlClient;
+    private static final SQLClient SQLClient = sqlClient;
     private final EmployeeHandler employeeHandler;
     private final ProjectHandler projectHandler;
     private final TaskHandler taskHandler;
     private final TimeLogHandler timeLogHandler;
+    private final DocumentHandler documentHandler;
+    private final DashboardHandler dashboardHandler;
     private final JWTAuth jwtAuth;
 
     public AllRoute(JDBCClient dbClient, JWTAuth jwtAuth) {
@@ -28,6 +31,8 @@ public class AllRoute extends AbstractVerticle {
         this.projectHandler = new ProjectHandler(dbClient);
         this.taskHandler = new TaskHandler(dbClient);
         this.timeLogHandler = new TimeLogHandler(dbClient);
+        this.documentHandler = new DocumentHandler(dbClient);
+        this.dashboardHandler = new DashboardHandler(dbClient);
         this.jwtAuth = jwtAuth;
     }
 
@@ -75,15 +80,31 @@ ctx.response()
 
         // Time-Log Routes
        router.post("/api/time-logs").handler(timeLogHandler::createTimeLog);
-router.get("/api/time-logs").handler(timeLogHandler::getAllTasks);
-router.get("/api/time-logs/:task_id").handler(timeLogHandler::getByTaskId);
+       router.get("/api/time-logs").handler(timeLogHandler::getAllTasks);
+       router.get("/api/time-logs/:task_id").handler(timeLogHandler::getByTaskId);
+       router.get("/api/time-logs").handler(timeLogHandler::getAllLogs);
+       router.route().handler(JWTAuthHandler.create(jwtAuth));
 
-router.get("/api/time-logs").handler(timeLogHandler::getAllLogs);
-        router.route().handler(JWTAuthHandler.create(jwtAuth));
+    //    Document Routes
+       router.post("/api/projects/:projectId/documents").handler(BodyHandler.create().setUploadsDirectory("uploads"));
+router.post("/api/projects/:projectId/documents").handler(documentHandler::uploadDocument);
+router.get("/api/projects/:projectId/documents").handler(documentHandler::listDocuments);
+router.get("/api/documents/:id").handler(documentHandler::downloadDocument);
+router.delete("/api/documents/:id").handler(documentHandler::deleteDocument);
 
+// 
+router.get("/api/admin/dashboard")
+      .handler(JWTAuthHandler.create(jwtAuth))
+      .handler(ctx -> {
+          JsonObject user = ctx.user().principal();
+          if (!"admin".equals(user.getString("role"))) {
+              ctx.response().setStatusCode(403).end("Forbidden");
+              return;
+          }
+          new DashboardHandler(SQLClient).handle(ctx);
+      });
 
-
-        
+ 
         vertx.createHttpServer()
             .requestHandler(router)
             .listen(8081)

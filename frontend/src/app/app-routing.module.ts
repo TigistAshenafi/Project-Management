@@ -11,6 +11,7 @@ import { ProjectManagementComponent } from './project-management/project-managem
 import { TaskManagementComponent } from './task-management/task-management.component';
 import { EmployeeManagementComponent } from './employee-management/employee-management.component';
 import { TimeLogManagementComponent } from './time-log-management/time-log-management.component';
+import { DocumentManagementComponent } from './document-management/document-management.component';
 
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
         data: { role: 'admin' }
       },
       {path: 'timelog', component: TimeLogManagementComponent},
+      {path: 'document', component: DocumentManagementComponent},
       { path: '', redirectTo: 'employees', pathMatch: 'full' }
     ]
   },

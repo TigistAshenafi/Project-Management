@@ -1,0 +1,75 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Document Management</h2>
+
+  <!-- File Upload Section -->
+  <div class="mb-3">
+    <label for="fileUpload" class="form-label">Select File to Upload:</label>
+    <input type="file" id="fileUpload" class="form-control" (change)="onFileSelected($event)" />
+<div>
+          <label>Project</label>
+    <select [(ngModel)]="projectId" class="form-control">
+      <option [ngValue]="null">Select Project</option>
+      <option *ngFor="let project of projects" [value]="project.id">
+      {{ project.name }}
+      </option>
+    </select>
+</div>
+
+    <button class="btn btn-primary mt-2" (click)="onUpload()" [disabled]="uploading">
+      Upload
+    </button>
+
+    <!-- Progress Bar -->
+    <div *ngIf="uploading" class="progress mt-2">
+      <div
+        class="progress-bar progress-bar-striped progress-bar-animated"
+        role="progressbar"
+        [style.width.%]="uploadProgress"
+        [attr.aria-valuenow]="uploadProgress"
+        [attr.aria-valuemin]="0"
+        [attr.aria-valuemax]="100"
+      >
+        {{ uploadProgress }}%
+      </div>
+    </div>
+  </div>
+
+  <!-- Document List Section -->
+  <div class="mt-4">
+    <h4>Documents</h4>
+    <table class="table table-bordered table-hover mt-2" *ngIf="documents.length > 0; else noDocs">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>File Name</th>
+          <th>Project</th>
+          <th>Uploaded Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doc of documents | paginate: { itemsPerPage: 5, currentPage: currentPage}">
+          <td>{{ doc.id }}</td>
+          <td>{{ doc.file_name }}</td>
+          <td>{{ getProjectName(doc.projectId) }}</td>
+          <td>{{ doc.upload_date | date: 'short' }}</td>
+          <td>
+            <button class="btn btn-sm btn-success me-2" (click)="onDownload(doc.id)">
+              Download
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="onDelete(doc.id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #noDocs>
+      <div class="alert alert-info">No documents available for this project.</div>
+    </ng-template>
+
+      <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+
+  </div>
+</div>

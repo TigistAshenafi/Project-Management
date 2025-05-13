@@ -18,6 +18,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border-radius: 10px;
   font-weight: bold;
 }
+.toast-warning {
+  background-color: #ffc107 !important;
+  color: black;
+  padding : 10px;
+  border-radius: 10px;
+  font-weight: bold;
+}
 
 .toast-error {
   background-color: #dc3545 !important;
@@ -42,3 +49,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   position: fixed !important;
   z-index: 9999 !important;
 } */
+
+/* Reusable utility styles */
+.input-field {
+  @apply border rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400;
+}
+
+.summary-card {
+  @apply p-4 rounded-xl shadow text-center;
+}

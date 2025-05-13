@@ -23,8 +23,8 @@ public class TimeLogHandler {
                 SQLConnection conn = ar.result();
                 conn.updateWithParams(query,
                         new JsonArray()
-                                .add(body.getInteger("user_id"))
-                                .add(body.getInteger("task_id"))
+                                .add(Integer.parseInt(body.getString("user_id")))
+                                .add(Integer.parseInt(body.getString("task_id")))
                                 .add(body.getString("date"))
                                 .add(body.getDouble("hours"))
                                 .add(body.getString("description")),

@@ -13,7 +13,7 @@ import { AuthInterceptor } from './auth.interceptor';
 import { RoleGuard } from './role.guard';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './core/Services/auth.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpEventType} from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ProjectManagementComponent } from './project-management/project-management.component';
 import { TaskManagementComponent } from './task-management/task-management.component';
@@ -23,6 +23,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { TimeLogManagementComponent } from './time-log-management/time-log-management.component';
 import { LayoutComponent } from './layout/layout.component';
+import { DocumentManagementComponent } from './document-management/document-management.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,6 +38,8 @@ import { LayoutComponent } from './layout/layout.component';
     EmployeeManagementComponent,
     TimeLogManagementComponent,
     LayoutComponent,
+    DocumentManagementComponent,
+    AdminDashboardComponent,
   ],
   imports: [
     BrowserModule,

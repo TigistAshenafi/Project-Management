@@ -26,25 +26,21 @@ export class TimeLogManagementComponent implements OnInit {
   constructor(private timeLogService: TimeLogService) {}
 
   ngOnInit(): void {
-    this.loadTasks();
+    this.loadTask();
   }
 
-  loadTasks(): void {
-      this.timeLogService.getAllLogs().subscribe({
-    next: logs => this.logs = logs,
-    error: err => console.error('Error loading time logs:', err)
-  });
-    this.timeLogService.getAllTask().subscribe({
-      next: (tasks) => {
-        this.tasks = tasks;
-        if (tasks.length > 0) {
-          this.log.task_id = tasks[0].id;
-          this.fetchLogs(tasks[0].id);
-        }
+    loadTask(): void {
+    this.timeLogService.getAllLogs().subscribe({
+      next: (data) => {
+        this.logs = data;
       },
-      error: (err) => console.error('Error loading tasks:', err)
+      error: (err) => {
+        console.error('Failed to load tasks:', err);
+      }
     });
-  }
+        this.timeLogService.getAllTask().subscribe(t => this.tasks = t);
+    }
+
 
   submitLog(): void {
   this.log.task_id = +this.log.task_id; // Coerce to number
@@ -68,26 +64,6 @@ export class TimeLogManagementComponent implements OnInit {
     }
   });
 }
-
-  // submitLog(): void {
-  //    console.log('Submitting log:', this.log);
-  //   if (!this.log.task_id || !this.log.date || this.log.hours <= 0) {
-  //     alert('Please fill all required fields correctly.');
-  //     return;
-  //   }
-  //   this.timeLogService.createTimeLog(this.log).subscribe({
-  //     next: () => {
-  //       this.fetchLogs(this.log.task_id);
-  //       this.log.date = '';
-  //       this.log.hours = 0;
-  //       this.log.description = '';
-  //     },
-  //     error: (err) => {
-  //       console.error('Error logging time:', err);
-  //       alert('Failed to log time.');
-  //     }
-  //   });
-  // }
 
   fetchLogs(taskId: number): void {
     this.timeLogService.getLogsByTask(taskId).subscribe({
