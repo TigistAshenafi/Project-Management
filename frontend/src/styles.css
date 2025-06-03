@@ -36,19 +36,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .toast-center-center {
   top: 10% !important;
-  left: 90% !important;
+  left: 80% !important;
   transform: translate(-50%, -50%) !important;
   position: fixed !important;
   z-index: 9999 !important;
 }
 
-/* .toast-top-center-offset {
+.toast-top-center-offset {
   top: 100px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   position: fixed !important;
   z-index: 9999 !important;
-} */
+}
 
 /* Reusable utility styles */
 .input-field {

@@ -1,43 +1,49 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpEventType } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpEventType, HttpRequest, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Project } from '../models/project.model';
-
-
+import { Document } from '../models/document.model';
 @Injectable({
   providedIn: 'root'
 })
 export class DocumentService {
+
     private baseUrl = `${environment.ApiUrl}/api`;
 
   constructor(private http: HttpClient) {}
 
-  // Upload a document
-  uploadDocument(projectId: number, file: File): Observable<any> {
-    const formData: FormData = new FormData();
-    formData.append('file', file, file.name);
-    return this.http.post(`${this.baseUrl}/projects/${projectId}/documents`, formData);
+  getProjects(): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.baseUrl}/projects`);
+  }
+  listDocuments(): Observable<Document[]> {
+    return this.http.get<Document[]>(`${this.baseUrl}/documents`);
   }
 
-  // List documents of a project
-  listDocuments(projectId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/projects/${projectId}/documents`);
-  }
+  // getDocumentsByProject(projectId: number): Observable<any[]> {
+  //   return this.http.get<any[]>(`${this.baseUrl}/documents/projects/${projectId}`);
+  // }
 
-  // Download document by ID
+uploadDocument(projectId: number, file: File): Observable<HttpEvent<any>> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return this.http.post<any>(`${this.baseUrl}/documents/projects/${projectId}`,
+    formData,
+    {
+      reportProgress: true,
+      observe: 'events'
+    }
+  );
+}
   downloadDocument(id: number): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}/documents/${id}`, {
+    return this.http.get(`${this.baseUrl}/documents/download/${id}`, {
       responseType: 'blob'
     });
   }
 
-  // Delete document by ID
   deleteDocument(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/documents/${id}`);
-  }
 
-  getProjects(): Observable<Project[]> {
-      return this.http.get<Project[]>(`${this.baseUrl}/projects`);
-    }
+  }
 }

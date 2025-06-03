@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>employee-management</artifactId>
+    <artifactId>project-management</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Employee Management System</name>
+    <name>Project Management System</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

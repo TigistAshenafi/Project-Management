@@ -5,12 +5,14 @@ import io.vertx.core.CompositeFuture;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-// import io.vertx.core.json.jackson.DatabindCodec;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.jdbc.JDBCClient;
 import java.util.Base64;
-// import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.vertx.core.json.jackson.DatabindCodec;
 public class MainVerticle extends AbstractVerticle {
     // private JDBCClient dbClient; // Store the shared dbClient
 
@@ -22,6 +24,11 @@ public class MainVerticle extends AbstractVerticle {
 
     @Override
     public void start(Promise<Void> startPromise) {
+        ObjectMapper mapper = DatabindCodec.mapper();
+mapper.registerModule(new JavaTimeModule());
+
+ObjectMapper prettyMapper = DatabindCodec.prettyMapper();
+prettyMapper.registerModule(new JavaTimeModule());
         vertx.deployVerticle(new MySQLVerticle())
             .compose(id -> {
                 JDBCClient dbClient = MySQLVerticle.getSharedDbClient();

@@ -144,13 +144,28 @@ th {
 
 td button {
   padding: 0.4rem 0.9rem;
-  font-size: 0.85rem;
   margin-right: 0.5rem;
   border-radius: 6px;
-  color: white;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
+}
+.btn-warning {
+  background-color: #ffc107;
+  color: black;
+}
+
+.btn-warning:hover {
+  background-color: #d5a103;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #b21a2a;
 }
 
 .item-buttons{

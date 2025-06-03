@@ -3,6 +3,7 @@ import { DocumentService } from '../core/Services/document.service';
 import { ToastrService } from 'ngx-toastr';
 import { Document } from '../core/models/document.model';
 import { Project } from '../core/models/project.model';
+import { HttpEventType } from '@angular/common/http';
 // import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 @Component({
@@ -11,144 +12,192 @@ import { Project } from '../core/models/project.model';
   styleUrls: ['./document-management.component.css']
 })
 export class DocumentManagementComponent implements OnInit {
-  selectedFile!: File;
-  documents: Document[] = [];
+  selectedFile: File | null = null;
+  uploading = false;
+  uploadProgress = 0;
+
   projects: Project[] = [];
-  projectId!: number;
-  uploading: boolean = false;
-  uploadProgress: number = 0;
+  project_id: number | null = null;
+  documents: Document[] = [];
+
   currentPage = 1;
+
+  // type = ['pdf', 'png', 'jpg', 'jpeg'];
 
   constructor(
     private documentService: DocumentService,
     private toastr: ToastrService
   ) {}
 
-  ngOnInit(): void {
-    this.loadDocuments();
-    this.loadProjects();
-  }
+onFileSelected(event: any): void {
+  const file = event.target.files[0];
+  const allowedTypes = ['application/pdf', 'image/png', 'image/jpg', 'image/jpeg'];
+  const maxSize = 5 * 1024 * 1024; // 5MB
 
-  onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0];
-  }
-
- onUpload(): void {
-  if (!this.projectId) {
-    this.toastr.warning('Please select a project.', 'Warning',{
-        toastClass: 'toast-warning',
-        positionClass: 'toast-center-center',
-    }
-    );
+  if (!file) {
     return;
   }
-  if (this.selectedFile) {
-    this.uploading = true;
-    this.documentService.uploadDocument(this.projectId, this.selectedFile).subscribe({
-      next: () => {
-        this.uploadProgress = 100;
-        this.toastr.success('Upload successful!', 'Success',{
-            toastClass: 'toast-success',
-          positionClass: 'toast-center-center',
-        });
-        this.uploading = false;
-        this.loadDocuments();
-      },
-      error: (err) => {
-        this.uploading = false;
-        this.toastr.error(`Upload failed: ${err.error}`, 'Failed',{
-            toastClass: 'toast-error',
-          positionClass: 'toast-center-center',
-        });
-      }
+
+  if (file.size > maxSize) {
+    this.toastr.warning('File size exceeds 5MB limit.', 'Warning', {
+      toastClass: 'toast-warning',
+      positionClass: 'toast-center-center'
     });
-  } else {
-    this.toastr.warning('Please select a file.', 'Warning',{
-        toastClass: 'toast-warning',
-          positionClass: 'toast-center-center',
-    });
+    event.target.value = '';  // Reset file input
+    return;
   }
+
+  if (!allowedTypes.includes(file.type)) {
+    this.toastr.warning('Invalid file type. Only PDF, PNG, JPG, JPEG allowed.', 'Warning', {
+      toastClass: 'toast-warning',
+      positionClass: 'toast-center-center'
+    });
+    event.target.value = '';  // Reset file input
+    return;
+  }
+this.selectedFile = event.target.files[0];
 }
 
-    getProjectName(id: number): string {
+  ngOnInit(): void {
+    this.loadProjects();
+    this.loadDocuments();
+  }
+
+  loadProjects() {
+    this.documentService.getProjects().subscribe({
+      next: data => this.projects = data,
+      error: err => console.error('Error loading projects', err)
+    });
+  }
+
+  getProjectName(id: number): string {
     const proj = this.projects.find(p => p.id === id);
     return proj ? proj.name : 'Unknown';
   }
 
-  loadProjects(): void {
-  this.documentService.getProjects().subscribe({
-    next: (res) => {
-      this.projects = res;
-    },
-    error: () => {
-      this.toastr.error('Failed to load projects', 'Failed',{
-          toastClass: 'toast-error',
-          positionClass: 'toast-center-center',
-      });
-    }
-  });
-}
-
- loadDocuments(): void {
-  if (!this.projectId) {
-    this.toastr.warning('Please select a project first', 'Warning', {
+ onUpload() {
+        if (!this.project_id) {
+    this.toastr.warning('Please select a project.', 'Warning', {
       toastClass: 'toast-warning',
-      positionClass: 'toast-center-center'
+      positionClass: 'toast-center-center',
     });
     return;
   }
 
-  this.documentService.listDocuments(this.projectId).subscribe({
-    next: (res) => {
-      this.documents = res;
-    },
-    error: (err) => {
-      console.error('Error loading documents:', err);
-      this.toastr.error('Failed to load documents', 'Error', {
-        toastClass: 'toast-error',
-        positionClass: 'toast-center-center'
-      });
-    }
-  });
-}
+  if (!this.selectedFile) {
+    this.toastr.warning('Please select a valid file.', 'Warning', {
+      toastClass: 'toast-warning',
+      positionClass: 'toast-center-center',
+    });
+    return;
+  }
 
-  onDownload(id: number): void {
-    this.documentService.downloadDocument(id).subscribe({
-      next: (file) => {
-        const blob = new Blob([file], { type: 'application/octet-stream' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `document_${id}`;
-        link.click();
-        this.toastr.success('Download started', 'Success', {
-          toastClass: 'toast-success',
-          positionClass: 'toast-center-center'
-        });
+    this.uploading = true;
+    this.uploadProgress = 0;
+
+    this.documentService.uploadDocument(this.project_id, this.selectedFile).subscribe({
+      next: (event) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          this.uploadProgress = Math.round((100 * event.loaded) / event.total);
+        } else if (event.type === HttpEventType.Response) {
+          this.uploading = false;
+          this.selectedFile = null;
+          this.toastr.success('Upload successfully!', 'Success', {
+        toastClass: 'toast-success',
+        positionClass: 'toast-center-center',
+      });
+          this.loadDocuments(); // Reload documents after upload
+        }
       },
-      error: () => {
-        this.toastr.error('Download failed', 'Failed', {
-          toastClass: 'toast-error',
-          positionClass: 'toast-center-center'
-        });
-      }
+      error: (err) => {
+        this.uploading = false;
+        console.error('Upload failed', err);
+          this.toastr.error('Failed to upload document', err, {
+        toastClass: 'toast-error',
+        positionClass: 'toast-center-center',
+  }
+);
+
+      },
     });
   }
 
-  onDelete(id: number): void {
-    this.documentService.deleteDocument(id).subscribe({
-      next: () => {
-        this.toastr.success('Document deleted', 'Success', {
-          toastClass: 'toast-success',
-          positionClass: 'toast-center-center'
-        });
-        this.loadDocuments();
+loadDocuments() {
+//     if (this.project_id) {
+//       this.documentService.getDocumentsByProject(this.project_id).subscribe({
+//         next: (data) => {
+//           console.log('Documents loaded:', data);
+//           this.documents = data;
+//         },
+//         error: (err) => {
+//           console.error('Error loading documents', err);
+//           this.toastr.error('Failed to load documents', 'Error', {
+//         toastClass: 'toast-error',
+//         positionClass: 'toast-center-center',
+//       });
+//      },
+//   });
+//  } else {
+      // If no project_id, load all documents
+      this.documentService.listDocuments().subscribe({
+        next: (data) => {
+          console.log('All documents loaded:', data);
+          this.documents = data;
+        },
+        error: (err) => {
+          console.error('Error loading all documents', err);
+          this.toastr.error('Failed to load all documents', err.message, {
+            toastClass:'toast-error',
+             positionClass: 'toast-center-center'
+          });
+        },
+      });
+    // }
+  }
+
+  onDownload(id: number) {
+    this.documentService.downloadDocument(id).subscribe({
+      next: blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `document_${id}`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+          this.toastr.success('Download successfully!', 'Success', {
+        toastClass: 'toast-success',
+        positionClass: 'toast-center-center',
+      });
       },
-      error: () => {
-        this.toastr.error('Delete failed', 'Failed', {
-          toastClass: 'toast-error',
-          positionClass: 'toast-center-center'
-        });
-      }
+      error: (err) => {
+        console.error('Error loading all documents', err);
+          this.toastr.error('Failed to load all documents', err, {
+            toastClass:'toast-error',
+             positionClass: 'toast-center-center'
+          });
+        }
+    });
+  }
+
+  onDelete(id: number) {
+    if (!confirm('Are you sure you want to delete this document?')) return;
+
+    this.documentService.deleteDocument(id).subscribe({
+      next: (message) => {
+    console.log('Delete success:', message);
+    this.toastr.success('Document deleted successfully','Success',{
+      toastClass:'toast-success',
+      positionClass: 'toast-center-center'
+    });
+    this.loadDocuments();
+  },
+  error: (err) => {
+    console.error('Delete failed', err);
+    this.toastr.error('Failed to delete document', 'Error',{
+      toastClass:'toast-error',
+      positionClass: 'toast-center-center'
+    });
+  }
     });
   }
 }

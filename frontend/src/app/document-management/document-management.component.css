@@ -1,5 +1,5 @@
 .container {
-  max-width: 700px;
+  max-width: 800px;
   margin: 20px auto;
   padding: 24px;
   background-color: #fff;
@@ -26,25 +26,29 @@
   cursor: pointer;
 }
 
-.btn:hover {
-  background-color:#27ae60;
+.btn-success:hover {
+  background-color: #00b327;
 }
 
+.btn-success {
+  background-color: #11d261;
+}
+
+/* .btn:hover {
+  background-color:#27ae60;
+} */
+
 .btn-danger {
-  background-color: #e74c3c;
+  background-color: #dc3545;
+  color: white;
 }
 
 .btn-danger:hover {
-  background-color: #c0392b;
+  background-color: #b21a2a;
 }
-
-.upload-btn {
+/* .upload-btn {
   background-color: #2ecc71;
-}
-
-.upload-btn:hover {
-  background-color: #27ae60;
-}
+} */
 
 .document-table {
   width: 100%;

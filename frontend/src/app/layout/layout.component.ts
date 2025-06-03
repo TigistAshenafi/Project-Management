@@ -18,7 +18,7 @@ export class LayoutComponent {
   get currentUser() {
     return this.authService.currentUserValue;
   }
-  
+
   logout() {
     this.authService.logout();
     console.log('User logged out');

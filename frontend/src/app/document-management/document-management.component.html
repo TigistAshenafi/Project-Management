@@ -4,20 +4,23 @@
   <!-- File Upload Section -->
   <div class="mb-3">
     <label for="fileUpload" class="form-label">Select File to Upload:</label>
-    <input type="file" id="fileUpload" class="form-control" (change)="onFileSelected($event)" />
+    <input type="file" id="fileUpload" class="form-control" (change)="onFileSelected($event)"/>
 <div>
-          <label>Project</label>
-    <select [(ngModel)]="projectId" class="form-control">
+  <label>Project</label>
+    <select [(ngModel)]="project_id" class="form-control" (change)="loadDocuments()">
       <option [ngValue]="null">Select Project</option>
-      <option *ngFor="let project of projects" [value]="project.id">
+      <option *ngFor="let project of projects" [ngValue]="project.id">
       {{ project.name }}
       </option>
     </select>
 </div>
 
-    <button class="btn btn-primary mt-2" (click)="onUpload()" [disabled]="uploading">
-      Upload
-    </button>
+    <button
+  class="btn btn-success mt-2"
+  (click)="onUpload()"
+  [disabled]="uploading || !selectedFile">
+  {{ uploading ? 'Uploading...' : 'Upload' }}
+</button>
 
     <!-- Progress Bar -->
     <div *ngIf="uploading" class="progress mt-2">
@@ -51,7 +54,7 @@
         <tr *ngFor="let doc of documents | paginate: { itemsPerPage: 5, currentPage: currentPage}">
           <td>{{ doc.id }}</td>
           <td>{{ doc.file_name }}</td>
-          <td>{{ getProjectName(doc.projectId) }}</td>
+          <td>{{ getProjectName(doc.project_id) }}</td>
           <td>{{ doc.upload_date | date: 'short' }}</td>
           <td>
             <button class="btn btn-sm btn-success me-2" (click)="onDownload(doc.id)">
