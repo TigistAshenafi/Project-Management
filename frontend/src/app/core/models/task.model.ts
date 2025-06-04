@@ -2,8 +2,9 @@ export interface Task {
   id: number;
   title: string;
   description: string;
-  status: 'To Do' | 'In Progress' | 'Done';
+  status: string;
   project_id: number;
   assigned_to: number;
-  due_date: Date;
+  due_date: string;
+  estimated_hours: number;
 }

@@ -76,34 +76,31 @@ public class MySQLVerticle extends AbstractVerticle {
                         )
                         """, promise);
                         connection.execute("""
-                            CREATE TABLE IF NOT EXISTS tasks(
-                                 id INT AUTO_INCREMENT PRIMARY KEY,
-                                 title VARCHAR(255) NOT NULL,
-                                 description TEXT NULL,
-                                 status ENUM('To Do', 'In Progress', 'Done') DEFAULT 'To Do',
-                                 project_id INT,
-                                 assigned_to INT,
-                                 due_date DATE NULL,
-                                 FOREIGN KEY (project_id) REFERENCES projects(id),
-                                 FOREIGN KEY (assigned_to) REFERENCES employees(id),
-                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-                            )
+                            CREATE TABLE IF NOT EXISTS tasks (
+                                id INT AUTO_INCREMENT PRIMARY KEY,
+                                title VARCHAR(255) NOT NULL,
+                                description TEXT,
+                                status VARCHAR(50),
+                                project_id INT,
+                                assigned_to INT,
+                                due_date DATE,
+                                estimated_hours DOUBLE
+                            );
                             """, promise);
                          connection.execute("""
                            CREATE TABLE IF NOT EXISTS time_logs (
-                                 id INT PRIMARY KEY AUTO_INCREMENT,
-                                 user_id INT NOT NULL,
-                                 task_id INT NOT NULL,
-                                 date DATE NOT NULL,
-                                 hours DECIMAL(5,2) NOT NULL,
-                                 description TEXT,
-                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                 FOREIGN KEY (user_id) REFERENCES users(id),
-                                 FOREIGN KEY (task_id) REFERENCES tasks(id));
-                                 """, promise);
+                           id INT AUTO_INCREMENT PRIMARY KEY,
+                           user_id INT NOT NULL,
+                           task_id INT NOT NULL,
+                           date DATE NOT NULL,
+                           hours DOUBLE NOT NULL,
+                           description TEXT,
+                           FOREIGN KEY (task_id) REFERENCES tasks(id),
+                           FOREIGN KEY (user_id) REFERENCES users(id)
+                       );
+                           """, promise);
                          connection.execute("""
-                                 CREATE TABLE documents ( 
+                                 CREATE TABLE IF NOT EXISTS documents ( 
                                  id INT PRIMARY KEY AUTO_INCREMENT,
                                  project_id INT,
                                  file_name VARCHAR(255),

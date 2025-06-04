@@ -1,46 +1,116 @@
-<div class="container">
+<div class="task-management container">
   <h2>Log Time</h2>
-  <form (ngSubmit)="submitLog()" #timeForm="ngForm" class="form">
+
+  <!-- Button to show the form -->
+  <button
+    class="btn btn-success"
+    *ngIf="!formVisible"
+    (click)="formVisible = true; isEditMode = false"
+  >
+    Log Time
+  </button>
+
+  <!-- Time log form -->
+  <form
+    *ngIf="formVisible"
+    (ngSubmit)="submitLog()"
+    #timeForm="ngForm"
+    class="task-form"
+  >
     <div>
       <label>Date</label>
-      <input type="date" [(ngModel)]="log.date" name="date" [min]="minDate" required />
+      <input
+        type="date"
+        [(ngModel)]="log.date"
+        name="date"
+        [min]="minDate"
+        required
+      />
     </div>
     <div>
       <label>Hours</label>
-      <input type="number" [(ngModel)]="log.hours" name="hours" min="0.1" step="0.1" required />
+      <input
+        type="number"
+        [(ngModel)]="log.hours"
+        name="hours"
+        min="0.1"
+        step="0.1"
+        required
+      />
     </div>
     <div>
       <label>Tasks</label>
       <select [(ngModel)]="log.task_id" name="task_id" required>
         <option value="" disabled>Select Task</option>
-        <option *ngFor="let task of tasks" [value]="task.id">{{ task.title }}</option>
+        <option *ngFor="let task of tasks" [value]="task.id">
+          {{ task.title }}
+        </option>
       </select>
     </div>
     <div>
       <label>Description</label>
       <textarea [(ngModel)]="log.description" name="description"></textarea>
     </div>
-    <button class="btn" type="submit" [disabled]="!timeForm.form.valid">Log Time</button>
+
+    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+      <button
+        class="btn btn-primary"
+        type="submit"
+        [disabled]="!timeForm.form.valid"
+      >
+        {{ isEditMode ? 'Update Log' : 'Log Time' }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary cancel-btn"
+        (click)="cancelEdit()"
+      >
+        Cancel
+      </button>
+    </div>
   </form>
 
-  <h2>Time Logs</h2>
-  <table>
+  <h2 class="list-title">Time Logs</h2>
+  <table class="task-list">
     <thead>
       <tr>
         <th>Date</th>
         <th>Hours</th>
         <th>Task</th>
         <th>Description</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let log of logs | paginate : { itemsPerPage: 5, currentPage: currentPage }">
+      <tr
+        *ngFor="
+          let log of logs | paginate: { itemsPerPage: 5, currentPage: currentPage }
+        "
+      >
         <td>{{ log.date }}</td>
         <td>{{ log.hours }}</td>
         <td>{{ getTaskTitle(log.task_id) }}</td>
         <td>{{ log.description }}</td>
+        <td class="item-buttons">
+          <button
+            class="btn btn-warning"
+            (click)="startEdit(log)"
+          >
+            Edit
+          </button>
+          <button
+            class="btn btn-danger"
+            (click)="deleteLog(log.id!)"
+          >
+            Delete
+          </button>
+        </td>
       </tr>
     </tbody>
   </table>
+  <div class="summary-box">
+  <strong>Total Hours for Task:</strong> {{ totalHours }}
+</div>
+
   <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
 </div>

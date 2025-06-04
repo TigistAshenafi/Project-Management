@@ -20,12 +20,23 @@ export class TimeLogService {
   getAllTask(): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.apiUrl}/api/tasks`);
   }
-  getAllLogs(): Observable<TimeLog[]>{
+
+  getAllLogs(): Observable<TimeLog[]> {
     return this.http.get<TimeLog[]>(`${this.apiUrl}/api/time-logs`);
   }
 
   getLogsByTask(taskId: number): Observable<TimeLog[]> {
-    // return this.http.get<TimeLog[]>(`${this.apiUrl}/api/time-logs`);
-        return this.http.get<TimeLog[]>(`${this.apiUrl}/api/time-logs/${taskId}`);
+    return this.http.get<TimeLog[]>(`${this.apiUrl}/api/time-logs/${taskId}`);
   }
+
+  updateTimeLog(id: number, log: TimeLog): Observable<any> {
+  return this.http.put(`${this.apiUrl}/api/time-logs/${id}`, log);
+}
+
+deleteTimeLog(id: number): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/api/time-logs/${id}`);
+}
+getTimeSummaryByTask(taskId: number) {
+  return this.http.get<{ total_hours: number }>(`${this.apiUrl}/api/time-logs/summary/${taskId}`);
+}
 }
