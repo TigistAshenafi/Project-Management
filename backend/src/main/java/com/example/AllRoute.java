@@ -86,9 +86,6 @@ public class AllRoute extends AbstractVerticle {
         router.delete("/api/time-logs/:id").handler(timeLogHandler::deleteTimeLog);
                 // router.get("/api/time-logs/:task_id").handler(timeLogHandler::getByTaskId);
 
-        // --- Time Summary Route ---
-        router.get("/api/time-logs/summary/:taskId").handler(timeLogHandler::getTimeSummaryByTask);
-
         // --- Document Routes ---
         // Upload: with BodyHandler that supports file upload
         router.post("/api/documents/projects/:project_id")

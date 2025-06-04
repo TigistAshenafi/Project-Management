@@ -22,6 +22,12 @@ export class TaskManagementComponent implements OnInit {
   currentPage = 1;
   minDate!: string;
 
+   filter = {
+    project_id: '',
+    assigned_to: '',
+    status: ''
+  };
+
   constructor(private fb: FormBuilder,
      private taskService: TaskService,
       private toastr: ToastrService,
@@ -182,6 +188,30 @@ addTasks(): void {
   resetForm() {
     this.taskForm.reset({ status: 'To Do' });
     this.editingTaskId = null;
+  }
+
+  applyFilters(): void {
+    this.taskService.getAllTasks().subscribe({
+      next: (data: Task[]) => {
+        this.tasks = data.filter(log => {
+          const matchesProject = !this.filter.project_id || log.project_id === +this.filter.project_id;
+          const matchesAssignedTo = !this.filter.assigned_to || log.assigned_to === +this.filter.assigned_to;
+          const matchesStatus = !this.filter.status || log.status === this.filter.status;
+          return matchesProject && matchesAssignedTo && matchesStatus;
+        });
+      },
+      error: (err) => {
+        console.error('Filter fetch error:', err);
+      }
+    });
+  }
+  clearFilters(): void {
+    this.filter = {
+      project_id: '',
+      assigned_to: '',
+      status: ''
+    };
+    this.applyFilters();
   }
 }
 

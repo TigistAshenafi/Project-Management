@@ -19,7 +19,10 @@ export class TimeLogManagementComponent implements OnInit {
     hours: 0,
     description: ''
   };
-
+  filter = {
+  task_id: '',
+  Date: '',
+};
   tasks: Task[] = [];
   logs: TimeLog[] = [];
   currentPage: number = 1;
@@ -44,7 +47,7 @@ export class TimeLogManagementComponent implements OnInit {
       next: (data) => {
          this.logs = data.map(log => ({
         ...log,
-        date: this.formatDate(log.date)
+        // date: this.formatDate(log.date)
       }));
       },
       error: (err) => {
@@ -56,7 +59,6 @@ export class TimeLogManagementComponent implements OnInit {
 
   onTaskChange(taskId: number): void {
     this.fetchLogs(taskId);
-    this.getSummary(taskId);
   }
 
 submitLog(): void {
@@ -65,7 +67,7 @@ submitLog(): void {
     return;
   }
 
-  // ✅ Ensure the date is formatted as 'YYYY-MM-DD'
+
   const dateObj = new Date(this.log.date);
   const formattedDate = dateObj.toISOString().split('T')[0];
   this.log.date = formattedDate;
@@ -122,30 +124,20 @@ submitLog(): void {
   startEdit(log: TimeLog): void {
     this.editingLogId = log.id!;
     this.log = { ...log,
-      date: this.formatDate(log.date)
+     date: this.normalizeDate(log.date)
     };
     this.isEditMode = true;
       this.formVisible = true;
   }
 
-  private formatDate(date: any): string {
-    // Ensure the date is parsed and returned in 'YYYY-MM-DD' format
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = ('0' + (d.getMonth() + 1)).slice(-2);
-    const day = ('0' + d.getDate()).slice(-2);
-    return `${year}/${month}/${day}`;
-  }
 
   fetchLogs(taskId: number): void {
   this.timeLogService.getLogsByTask(taskId).subscribe({
     next: (data) => {
       this.logs = data.map(log => ({
         ...log,
-        date: this.formatDate(log.date)
+        // date: this.formatDate(log.date)
       }));
-      this.getSummary(taskId);
-
     },
     error: (err) => {
       console.error('Error fetching logs:', err);
@@ -197,15 +189,39 @@ submitLog(): void {
       });
     }
   }
-getSummary(taskId: number): void {
-  this.timeLogService.getTimeSummaryByTask(taskId).subscribe({
-    next: (data) => {
-      this.totalHours = data.total_hours || 0;
+applyFilters(): void {
+  this.timeLogService.getAllLogs().subscribe({
+    next: (data: TimeLog[]) => {
+      this.logs = data.filter(log => {
+        const matchesTask = !this.filter.task_id || log.task_id === +this.filter.task_id;
+
+        const logDate = this.normalizeDate(log.date);         // normalize log date
+        const filterDate = this.normalizeDate(this.filter.Date); // normalize input date
+
+        const matchesDate = !this.filter.Date || logDate === filterDate;
+
+        return matchesTask && matchesDate;
+      });
     },
     error: (err) => {
-      console.error('Failed to fetch time summary', err);
-      this.totalHours = 0;
+      console.error('Filter fetch error:', err);
     }
   });
+}
+normalizeDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return ''; // invalid date guard
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+clearFilters(): void {
+  this.filter = {
+    task_id: '',
+    Date: ''
+  };
+  this.applyFilters();
 }
 }

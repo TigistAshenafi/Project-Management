@@ -36,7 +36,4 @@ export class TimeLogService {
 deleteTimeLog(id: number): Observable<any> {
   return this.http.delete(`${this.apiUrl}/api/time-logs/${id}`);
 }
-getTimeSummaryByTask(taskId: number) {
-  return this.http.get<{ total_hours: number }>(`${this.apiUrl}/api/time-logs/summary/${taskId}`);
-}
 }

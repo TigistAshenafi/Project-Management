@@ -1,15 +1,19 @@
 .employee-container {
-  max-width: 700px;
-  margin: 20px auto;
-  padding: 24px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  font-family: 'Segoe UI', sans-serif;
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(to right, #fdfbfb, #ebedee);
+  border-radius: 16px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  font-family: 'Poppins', sans-serif;
+}
+.employee-container h2 {
+  text-align: center;
+  margin: 30px;
+  color: #333;
 }
 
 #btn{
-  float: right;
   margin-right: 20px;
 }
 
@@ -105,6 +109,39 @@
   gap: 10px;
 }
 
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 8px;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex: 1 1 200px;
+}
+
+.filters input[type="text"] {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+}
+
+.filters .btn {
+  margin-top: auto;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -124,6 +161,7 @@ td {
 }
 
 th {
+  background-color: #f3f4f6;
   font-weight: 600;
   color: #111827;
 }

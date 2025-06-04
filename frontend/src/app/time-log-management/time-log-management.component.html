@@ -1,14 +1,23 @@
 <div class="task-management container">
-  <h2>Log Time</h2>
+  <h2 class="list-title">Time Log Management</h2>
 
   <!-- Button to show the form -->
-  <button
-    class="btn btn-success"
-    *ngIf="!formVisible"
-    (click)="formVisible = true; isEditMode = false"
-  >
-    Log Time
-  </button>
+  <button class="btn btn-success" *ngIf="!formVisible" (click)="formVisible = true; isEditMode = false" > Add Log Time </button>
+
+<div class="filters" *ngIf="!formVisible">
+  <label>Task:
+    <select [(ngModel)]="filter.task_id" (change)="applyFilters()">
+      <option value="">All</option>
+      <option *ngFor="let task of tasks" [value]="task.id">{{ task.title }}</option>
+    </select>
+  </label>
+
+  <label>Date:
+    <input type="date" [(ngModel)]="filter.Date" (change)="applyFilters()">
+  </label>
+
+  <button (click)="clearFilters()">Clear</button>
+</div>
 
   <!-- Time log form -->
   <form
@@ -52,7 +61,7 @@
       <textarea [(ngModel)]="log.description" name="description"></textarea>
     </div>
 
-    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+    <div>
       <button
         class="btn btn-primary"
         type="submit"
@@ -70,7 +79,6 @@
     </div>
   </form>
 
-  <h2 class="list-title">Time Logs</h2>
   <table class="task-list">
     <thead>
       <tr>
@@ -87,7 +95,8 @@
           let log of logs | paginate: { itemsPerPage: 5, currentPage: currentPage }
         "
       >
-        <td>{{ log.date }}</td>
+
+        <td>{{ log.date | date:'MM/dd/yyyy' }}</td>
         <td>{{ log.hours }}</td>
         <td>{{ getTaskTitle(log.task_id) }}</td>
         <td>{{ log.description }}</td>
@@ -108,9 +117,5 @@
       </tr>
     </tbody>
   </table>
-  <div class="summary-box">
-  <strong>Total Hours for Task:</strong> {{ totalHours }}
-</div>
-
   <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
 </div>

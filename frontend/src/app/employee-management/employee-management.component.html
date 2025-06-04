@@ -1,12 +1,12 @@
 <div class="employee-container">
+  <h2 class="list-title">Employee Management</h2>
   <!-- Toggle Add/Edit Button -->
   <button class="btn btn-success" (click)="toggleAddForm()" id="btn">
-    {{ editMode ? ' Editing Employee' : (showForm ? '- Cancel Add' : '+ Add Employee') }}
+    {{ editMode ? ' Editing Employee' : (showForm ? 'Cancel Adding' : 'Add Employee') }}
   </button>
-
   <!-- Show form only if showForm is true -->
   <form *ngIf="showForm" [formGroup]="employeeForm" (ngSubmit)=" selectedEmployeeId ? updateEmployee() : createEmployee()" class="employee-form">
-    <h2 class="form-title">{{ editMode ? ' Edit Employee' : '+ Add New Employee' }}</h2>
+    <h2 class="form-title">{{ editMode ? ' Edit Employee' : 'Add New Employee' }}</h2>
 
     <div class="form-group">
       <label for="name">Name</label>
@@ -44,7 +44,18 @@
   </form>
 
   <div class="employee-list">
-    <h3 class="list-title"> Employee List</h3>
+    <div class="filters" *ngIf="!showForm">
+  <label>
+    Name:
+    <input type="text" [(ngModel)]="filter.name" (input)="applyFilters()" placeholder="Search by name">
+  </label>
+  <label>
+    Position:
+    <input type="text" [(ngModel)]="filter.position" (input)="applyFilters()" placeholder="Search by position">
+  </label>
+  <button class="btn btn-primary" (click)="clearFilters()">Clear</button>
+</div>
+
     <table class="employee-list">
       <thead>
         <tr>
@@ -55,7 +66,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let employee of employees | paginate: { itemsPerPage: 5, currentPage: currentPage }">
+       <tr *ngFor="let employee of filteredEmployees | paginate: { itemsPerPage: 5, currentPage: currentPage }">
           <td>{{ employee.name }}</td>
           <td>{{ employee.position }}</td>
           <td>${{ employee.salary }}</td>

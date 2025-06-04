@@ -21,7 +21,12 @@ export class DocumentManagementComponent implements OnInit {
   documents: Document[] = [];
 
   currentPage = 1;
-
+  showForm = false;
+  filter = {
+      project_id: '',
+      assigned_to: '',
+      status: ''
+    };
   // type = ['pdf', 'png', 'jpg', 'jpeg'];
 
   constructor(
@@ -62,6 +67,10 @@ this.selectedFile = event.target.files[0];
     this.loadProjects();
     this.loadDocuments();
   }
+
+  toggleForm() {
+  this.showForm = !this.showForm;
+}
 
   loadProjects() {
     this.documentService.getProjects().subscribe({
@@ -200,4 +209,26 @@ loadDocuments() {
   }
     });
   }
+
+    applyFilters(): void {
+      this.documentService.listDocuments().subscribe({
+        next: (data: Document[]) => {
+          this.documents = data.filter(log => {
+            const matchesProject = !this.filter.project_id || log.project_id === +this.filter.project_id;
+            return matchesProject;
+          });
+        },
+        error: (err) => {
+          console.error('Filter fetch error:', err);
+        }
+      });
+    }
+    clearFilters(): void {
+      this.filter = {
+        project_id: '',
+        assigned_to: '',
+        status: ''
+      };
+      this.applyFilters();
+    }
 }

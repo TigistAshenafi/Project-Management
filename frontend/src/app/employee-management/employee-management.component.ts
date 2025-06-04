@@ -16,6 +16,12 @@ export class EmployeeManagementComponent implements OnInit {
   editMode: boolean = false;
   currentPage: number = 1;
   selectedEmployeeId: number | null = null;
+  filter = {
+  name: '',
+  position: ''
+};
+filteredEmployees: Employee[] = [];
+
 
   constructor(
     private fb: FormBuilder,
@@ -40,12 +46,27 @@ export class EmployeeManagementComponent implements OnInit {
     this.employeeService.getAllEmployee().subscribe({
       next: (data) => {
         this.employees = data;
+        this.applyFilters();
       },
       error: (err) => {
         console.error('Failed to load employees:', err);
       }
     });
   }
+
+  applyFilters(): void {
+  this.filteredEmployees = this.employees.filter(emp => {
+    const matchesName = !this.filter.name || emp.name.toLowerCase().includes(this.filter.name.toLowerCase());
+    const matchesPosition = !this.filter.position || emp.position.toLowerCase().includes(this.filter.position.toLowerCase());
+    return matchesName && matchesPosition;
+  });
+}
+clearFilters(): void {
+  this.filter.name = '';
+  this.filter.position = '';
+  this.applyFilters();
+}
+
 
   get formControls() {
     return this.employeeForm.controls;

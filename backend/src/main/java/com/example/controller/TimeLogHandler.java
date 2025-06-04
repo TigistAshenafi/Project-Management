@@ -193,38 +193,10 @@ public class TimeLogHandler {
                             conn.close();
                         });
             } else {
-                ctx.fail(500);
+               ctx.response()
+                   .setStatusCode(500)
+                   .end("Internal server error");
             }
         });
     }
-
-  public void getTimeSummaryByTask(RoutingContext ctx) {
-    String taskId = ctx.pathParam("taskId");
-
-    String query = "SELECT hours AS total_hours FROM time_logs WHERE task_id = ?";
-
-    dbClient.getConnection(connHandler -> {
-        if (connHandler.succeeded()) {
-            SQLConnection conn = connHandler.result();
-
-            conn.queryWithParams(query, new JsonArray().add(Integer.parseInt(taskId)), res -> {
-                if (res.succeeded()) {
-                    Double totalHours = 0.0;
-                    if (!res.result().getRows().isEmpty()) {
-                        totalHours = res.result().getRows().get(0).getDouble("total_hours");
-                    }
-                    JsonObject response = new JsonObject().put("total_hours", totalHours);
-                    ctx.response()
-                        .putHeader("Content-Type", "application/json")
-                        .end(response.encode());
-                } else {
-                    ctx.fail(500, res.cause());
-                }
-                conn.close();
-            });
-        } else {
-            ctx.fail(500);
-        }
-    });
-}
 }

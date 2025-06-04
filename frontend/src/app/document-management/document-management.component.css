@@ -1,11 +1,23 @@
-.container {
-  max-width: 800px;
+.document-container {
+  max-width: 1000px;
   margin: 20px auto;
   padding: 24px;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   font-family: 'Segoe UI', sans-serif;
+}
+.document-container h2 {
+  text-align: center;
+  margin: 30px;
+  color: #333;
+}
+
+.form-title, .list-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
 }
 
 .upload-section {
@@ -19,7 +31,6 @@
 .btn {
   padding: 8px 14px;
   margin-right: 5px;
-  background-color:  #2ecc71db;
   color: white;
   border: none;
   border-radius: 4px;
@@ -30,14 +41,6 @@
   background-color: #00b327;
 }
 
-.btn-success {
-  background-color: #11d261;
-}
-
-/* .btn:hover {
-  background-color:#27ae60;
-} */
-
 .btn-danger {
   background-color: #dc3545;
   color: white;
@@ -46,24 +49,44 @@
 .btn-danger:hover {
   background-color: #b21a2a;
 }
-/* .upload-btn {
-  background-color: #2ecc71;
-} */
 
-.document-table {
+.item-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 1.5rem;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 }
 
-.document-table th,
-.document-table td {
-  padding: 12px;
+th,
+td {
+  padding: 1rem;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
 }
-
-.document-table th {
-  background-color: #f2f2f2;
+th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #111827;
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 pagination-controls {
