@@ -14,7 +14,12 @@ export class ProjectManagementComponent implements OnInit {
   projects: Project[] = [];
   editingProjectId: number | null = null;
   showForm = false;
+  Statuses = ['not started', 'in progress', 'completed', 'on hold'];
   currentPage = 1;
+
+     filter = {
+    status: ''
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -26,7 +31,8 @@ export class ProjectManagementComponent implements OnInit {
   ngOnInit(): void {
     this.projectForm = this.fb.group({
       name: ['', Validators.required],
-      description: ['']
+      description: [''],
+      status: ['not started']
     });
     this.loadProjects();
   }
@@ -152,4 +158,23 @@ export class ProjectManagementComponent implements OnInit {
       this.projects = data;
     });
   }
+   applyFilters(): void {
+      this.projectsService.getAllProjects().subscribe({
+        next: (data: Project[]) => {
+          this.projects = data.filter(log => {
+            const matchesStatus = !this.filter.status || log.status?.trim().toLowerCase() === this.filter.status.trim().toLowerCase();
+        return matchesStatus;
+          });
+        },
+        error: (err) => {
+          console.error('Filter fetch error:', err);
+        }
+      });
+    }
+    clearFilters(): void {
+      this.filter = {
+        status: ''
+      };
+      this.applyFilters();
+    }
 }

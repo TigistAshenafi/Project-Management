@@ -71,6 +71,7 @@ public class MySQLVerticle extends AbstractVerticle {
                             id INT AUTO_INCREMENT PRIMARY KEY,
                             name VARCHAR(255) UNIQUE NOT NULL,
                             description VARCHAR(255) NOT NULL,
+                            status VARCHAR(50) DEFAULT 'not started',
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                         )
@@ -84,7 +85,10 @@ public class MySQLVerticle extends AbstractVerticle {
                                 project_id INT,
                                 assigned_to INT,
                                 due_date DATE,
-                                estimated_hours DOUBLE
+                                estimated_hours DOUBLE,
+                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                FOREIGN KEY (project_id) REFERENCES projects(id)
                             );
                             """, promise);
                          connection.execute("""
@@ -95,6 +99,8 @@ public class MySQLVerticle extends AbstractVerticle {
                            date DATE NOT NULL,
                            hours DOUBLE NOT NULL,
                            description TEXT,
+                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                            FOREIGN KEY (task_id) REFERENCES tasks(id),
                            FOREIGN KEY (user_id) REFERENCES users(id)
                        );
@@ -105,8 +111,9 @@ public class MySQLVerticle extends AbstractVerticle {
                                  project_id INT,
                                  file_name VARCHAR(255),
                                  file_path VARCHAR(255),
-                                 upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                 upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                 FOREIGN KEY (project_id) REFERENCES projects(id)
                                  );
                                  """,promise);
 

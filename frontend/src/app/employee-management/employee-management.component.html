@@ -77,6 +77,9 @@
         </tr>
       </tbody>
     </table>
+    <ng-template #noEmployees>
+      <p class="alert alert-info">No employees found.</p>
+    </ng-template>
     <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
 </div>
-</div>
+</div> 

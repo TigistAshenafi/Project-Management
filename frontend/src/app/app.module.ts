@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import {FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { NgChartsModule } from 'ng2-charts';
 import { RoleAssignmentComponent } from './role-assignment/role-assignment.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
@@ -43,7 +44,7 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,ReactiveFormsModule,FormsModule,HttpClientModule,RouterModule, ToastrModule.forRoot({
+    AppRoutingModule,ReactiveFormsModule,FormsModule,HttpClientModule,NgChartsModule,RouterModule, ToastrModule.forRoot({
       positionClass: 'toast-bottom-center',   // Positions: toast-top-left, toast-bottom-right, etc.
       timeOut: 4000,                      // Duration in milliseconds
       progressBar: true,                  // Show a progress bar

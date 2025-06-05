@@ -117,5 +117,8 @@
       </tr>
     </tbody>
   </table>
+  <ng-template #noTimeLogs>
+      <p class="alert alert-info">No time logs found</p>
+  </ng-template>
   <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
 </div>

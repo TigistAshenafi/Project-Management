@@ -1,113 +1,175 @@
 package com.example.controller;
-import io.vertx.core.CompositeFuture;
+
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.jdbc.JDBCClient;
+import io.vertx.ext.sql.SQLConnection;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.sql.SQLClient;
+
+import java.util.List;
+
+import io.vertx.core.CompositeFuture;
 import io.vertx.ext.web.RoutingContext;
 
 public class DashboardHandler {
+  private final JDBCClient db;
 
-    private final SQLClient client;
+  public DashboardHandler(JDBCClient db) {
+    this.db = db;
+  }
 
-    public DashboardHandler(SQLClient client) {
-        this.client = client;
-    }
+  public void getDashboardSummary(RoutingContext ctx) {
+    Future<Integer> totalProjectsF = count("projects");
+    Future<JsonObject> projectStatusF = groupCount("projects", "status");
+    Future<Integer> totalEmployeesF = count("employees"); 
+    Future<Integer> totalTasksF = count("tasks");
+    Future<Integer> totalTimeLoggedF = sum("time_logs", "hours");
 
-    public void handle(RoutingContext ctx) {
-        JsonObject dashboardData = new JsonObject();
+    Future<JsonObject> taskStatusF = groupCount("tasks", "status");
+    Future<JsonObject> taskByYearF = countByYear("tasks", "created_at");
+    Future<JsonObject> projectsByYearF = countByYear("projects", "created_at");
+    Future<JsonObject> tasksPerProjectF = countTasksPerProjectByName();
 
-        CompositeFuture.all(
-            getTotalProjects(),
-            getProjectStatusCount(),
-            getTotalEmployees(),
-            getTaskStatusCount(),
-            getTotalLoggedHours()
-        ).onSuccess(res -> {
-            dashboardData
-                .put("totalProjects", res.resultAt(0))
-                .put("projectStatus", res.resultAt(1))
-                .put("totalEmployees", res.resultAt(2))
-                .put("taskStatus", res.resultAt(3))
-                .put("loggedHours", res.resultAt(4));
+    CompositeFuture.all(List.of(
+      totalProjectsF, totalEmployeesF, totalTasksF, totalTimeLoggedF,
+      taskStatusF, projectStatusF, taskByYearF, projectsByYearF, tasksPerProjectF
+    )).onComplete(ar -> {
+      if (ar.succeeded()) {
+        JsonObject result = new JsonObject()
+          .put("totalProjects", totalProjectsF.result())
+          .put("totalEmployees", totalEmployeesF.result())
+          .put("Tasks", totalTasksF.result())
+          .put("totalTimeLogged", totalTimeLoggedF.result())
+          .put("taskStatus", taskStatusF.result())     
+          .put("projectStatus", projectStatusF.result())
+          .put("taskByYear", taskByYearF.result())
+          .put("projectsByYear", projectsByYearF.result())
+          .put("tasksPerProject", tasksPerProjectF.result());
 
-            ctx.response()
-               .putHeader("Content-Type", "application/json")
-               .end(dashboardData.encode());
-        }).onFailure(err -> {
-            ctx.response().setStatusCode(500).end(new JsonObject().put("error", err.getMessage()).encode());
-        });
-    }
+        ctx.response().putHeader("Content-Type", "application/json")
+           .end(result.encodePrettily());
+      } else {
+        ctx.fail(ar.cause());
+      }
+    });
+  }
 
-    private Future<JsonObject> getTotalProjects() {
-        Promise<JsonObject> promise = Promise.promise();
-        client.query("SELECT COUNT(*) AS total FROM projects", res -> {
-            if (res.succeeded()) {
-                int total = res.result().getResults().get(0).getInteger(0);
-                promise.complete(new JsonObject().put("total", total));
-            } else {
-                promise.fail(res.cause());
-            }
-        });
-        return promise.future();
-    }
+  private Future<Integer> count(String table) {
+    Promise<Integer> promise = Promise.promise();
+    db.getConnection(ar -> {
+      if (ar.failed()) {
+        promise.fail(ar.cause());
+        return;
+      }
+      SQLConnection conn = ar.result();
+      conn.query("SELECT COUNT(*) as total FROM " + table, res -> {
+        if (res.succeeded()) {
+          int total = res.result().getRows().get(0).getInteger("total");
+          promise.complete(total);
+        } else {
+          promise.fail(res.cause());
+        }
+        conn.close();
+      });
+    });
+    return promise.future();
+  }
 
-    private Future<JsonObject> getProjectStatusCount() {
-        Promise<JsonObject> promise = Promise.promise();
-        client.query("SELECT status, COUNT(*) AS count FROM projects GROUP BY status", res -> {
-            if (res.succeeded()) {
-                JsonObject statusCounts = new JsonObject();
-                for (JsonArray row : res.result().getResults()) {
-                    statusCounts.put(row.getString(0), row.getInteger(1));
-                }
-                promise.complete(statusCounts);
-            } else {
-                promise.fail(res.cause());
-            }
-        });
-        return promise.future();
-    }
+  private Future<Integer> sum(String table, String column) {
+    Promise<Integer> promise = Promise.promise();
+    db.getConnection(ar -> {
+      if (ar.failed()) {
+        promise.fail(ar.cause());
+        return;
+      }
+      SQLConnection conn = ar.result();
+      conn.query("SELECT SUM(" + column + ") as total FROM " + table, res -> {
+        if (res.succeeded()) {
+          Integer sum = res.result().getRows().get(0).getInteger("total");
+          promise.complete(sum == null ? 0 : sum);
+        } else {
+          promise.fail(res.cause());
+        }
+        conn.close();
+      });
+    });
+    return promise.future();
+  }
 
-    private Future<JsonObject> getTotalEmployees() {
-        Promise<JsonObject> promise = Promise.promise();
-        client.query("SELECT COUNT(*) AS total FROM employees", res -> {
-            if (res.succeeded()) {
-                int total = res.result().getResults().get(0).getInteger(0);
-                promise.complete(new JsonObject().put("total", total));
-            } else {
-                promise.fail(res.cause());
-            }
-        });
-        return promise.future();
-    }
+  private Future<JsonObject> groupCount(String table, String column) {
+    Promise<JsonObject> promise = Promise.promise();
+    db.getConnection(ar -> {
+      if (ar.failed()) {
+        promise.fail(ar.cause());
+        return;
+      }
+      SQLConnection conn = ar.result();
+      String sql = "SELECT " + column + ", COUNT(*) as total FROM " + table + " GROUP BY " + column;
+      conn.query(sql, res -> {
+        if (res.succeeded()) {
+          JsonObject json = new JsonObject();
+          res.result().getRows().forEach(row -> json.put(row.getString(column), row.getInteger("total")));
+          promise.complete(json);
+        } else {
+          promise.fail(res.cause());
+        }
+        conn.close();
+      });
+    });
+    return promise.future();
+  }
 
-    private Future<JsonObject> getTaskStatusCount() {
-        Promise<JsonObject> promise = Promise.promise();
-        client.query("SELECT status, COUNT(*) AS count FROM tasks GROUP BY status", res -> {
-            if (res.succeeded()) {
-                JsonObject taskStatus = new JsonObject();
-                for (JsonArray row : res.result().getResults()) {
-                    taskStatus.put(row.getString(0), row.getInteger(1));
-                }
-                promise.complete(taskStatus);
-            } else {
-                promise.fail(res.cause());
-            }
-        });
-        return promise.future();
-    }
+  private Future<JsonObject> countByYear(String table, String dateColumn) {
+    Promise<JsonObject> promise = Promise.promise();
+    db.getConnection(ar -> {
+      if (ar.failed()) {
+        promise.fail(ar.cause());
+        return;
+      }
+      SQLConnection conn = ar.result();
+      String sql = "SELECT YEAR(" + dateColumn + ") as year, COUNT(*) as total FROM " + table + " GROUP BY YEAR(" + dateColumn + ")";
+      conn.query(sql, res -> {
+        if (res.succeeded()) {
+          JsonObject json = new JsonObject();
+          res.result().getRows().forEach(row -> json.put(row.getInteger("year").toString(), row.getInteger("total")));
+          promise.complete(json);
+        } else {
+          promise.fail(res.cause());
+        }
+        conn.close();
+      });
+    });
+    return promise.future();
+  }
 
-    private Future<JsonObject> getTotalLoggedHours() {
-        Promise<JsonObject> promise = Promise.promise();
-        client.query("SELECT SUM(hours_logged) AS total_hours FROM time_logs", res -> {
-            if (res.succeeded()) {
-                Integer total = res.result().getResults().get(0).getInteger(0);
-                promise.complete(new JsonObject().put("total_hours", total == null ? 0 : total));
-            } else {
-                promise.fail(res.cause());
-            }
-        });
-        return promise.future();
-    }
+  private Future<JsonObject> countTasksPerProjectByName() {
+    Promise<JsonObject> promise = Promise.promise();
+    db.getConnection(ar -> {
+      if (ar.failed()) {
+        promise.fail(ar.cause());
+        return;
+      }
+
+      SQLConnection conn = ar.result();
+      String sql = "SELECT p.name AS project_name, COUNT(t.id) AS total " +
+                   "FROM tasks t " +
+                   "JOIN projects p ON t.project_id = p.id " +
+                   "GROUP BY p.name";
+
+      conn.query(sql, res -> {
+        if (res.succeeded()) {
+          JsonObject json = new JsonObject();
+          res.result().getRows().forEach(row -> {
+            json.put(row.getString("project_name"), row.getInteger("total"));
+          });
+          promise.complete(json);
+        } else {
+          promise.fail(res.cause());
+        }
+        conn.close();
+      });
+    });
+
+    return promise.future();
+  }
 }

@@ -14,6 +14,7 @@ public class ProjectHandler {
     public ProjectHandler(JDBCClient dbClient) {
         this.dbClient = dbClient;
     }
+
     private void executeQuery(String query, JsonArray params, RoutingContext context, String successMessage) {
         dbClient.updateWithParams(query, params, res -> {
             if (res.succeeded()) {
@@ -31,7 +32,7 @@ public class ProjectHandler {
             }
         });
     }
-    
+
     public void getAllProjects(RoutingContext context) {
         dbClient.query("SELECT * FROM projects", res -> {
             if (res.succeeded()) {
@@ -62,19 +63,24 @@ public class ProjectHandler {
         try {
             JsonObject project = context.body().asJsonObject();
             System.out.println("Received project: " + project.encodePrettily());
-    
+
+            String name = project.getString("name");
+            String description = project.getString("description");
+            String status = project.getString("status", "not started"); // Default to 'not started'
+
             dbClient.updateWithParams(
-                "INSERT INTO projects(name, description) VALUES (?, ?)",
+                "INSERT INTO projects(name, description, status) VALUES (?, ?, ?)",
                 new JsonArray()
-                    .add(project.getString("name"))
-                    .add(project.getString("description")),
+                    .add(name)
+                    .add(description)
+                    .add(status),
                 res -> {
                     if (res.succeeded()) {
                         long generatedId = res.result().getKeys().getLong(0); // Get auto-generated ID
                         JsonObject responseJson = new JsonObject()
                             .put("message", "Project added")
                             .put("id", generatedId);
-    
+
                         context.response()
                             .setStatusCode(201)
                             .putHeader("Content-Type", "application/json")
@@ -95,25 +101,24 @@ public class ProjectHandler {
                 .end(new JsonObject().put("error", e.getMessage()).encode());
         }
     }
-    
-    
 
     public void updateProject(RoutingContext context) {
         String id = context.pathParam("id");
         JsonObject project = context.body().asJsonObject();
-    
+
         dbClient.updateWithParams(
-            "UPDATE projects SET name = ?, description = ? WHERE id = ?",
+            "UPDATE projects SET name = ?, description = ?, status = ? WHERE id = ?",
             new JsonArray()
                 .add(project.getString("name"))
                 .add(project.getString("description"))
+                .add(project.getString("status"))
                 .add(id),
             res -> {
                 if (res.succeeded()) {
                     JsonObject responseJson = new JsonObject()
                         .put("message", "Project updated")
                         .put("id", id);
-    
+
                     context.response()
                         .setStatusCode(200)
                         .putHeader("Content-Type", "application/json")
@@ -127,7 +132,6 @@ public class ProjectHandler {
             }
         );
     }
-    
 
     public void deleteProject(RoutingContext context) {
         String id = context.pathParam("id");

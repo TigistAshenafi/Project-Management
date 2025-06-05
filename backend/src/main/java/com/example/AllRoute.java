@@ -3,7 +3,7 @@ package com.example;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonObject;
+// import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.web.Router;
@@ -98,15 +98,20 @@ public class AllRoute extends AbstractVerticle {
         router.delete("/api/documents/:id").handler(documentHandler::deleteDocument);
 
         // --- Admin Dashboard Report Route ---
-        router.get("/api/admin/dashboard")
-                .handler(ctx -> {
-                    JsonObject user = ctx.user().principal();
-                    if (!"admin".equals(user.getString("role"))) {
-                        ctx.response().setStatusCode(403).end("Forbidden");
-                    } else {
-                        dashboardHandler.handle(ctx);
-                    }
-                });
+router.get("/api/admin/dashboard/summary").handler(dashboardHandler::getDashboardSummary);
+router.get("/api/admin/dashboard/summary").handler(dashboardHandler::getDashboardSummary);
+
+
+
+        // router.get("/api/admin/dashboard")
+        //         .handler(ctx -> {
+        //             JsonObject user = ctx.user().principal();
+        //             if (!"admin".equals(user.getString("role"))) {
+        //                 ctx.response().setStatusCode(403).end("Forbidden");
+        //             } else {
+        //                 dashboardHandler.handle(ctx);
+        //             }
+        //         });
 
         // Start HTTP server
         vertx.createHttpServer()
