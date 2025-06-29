@@ -1,40 +1,69 @@
 <!-- NAVBAR -->
-<nav class="navbar navbar-light bg-light d-flex justify-content-between align-items-center px-3">
-  <div class="title"> <button class="btn btn-outline-primary" (click)="toggleSidebar()">
-    <i class="bi bi-list"></i>
-  </button>
-  Project Management</div>
+<nav
+  class="navbar navbar-light bg-light d-flex justify-content-between align-items-center px-3"
+>
+  <div class="title">
+    <button class="btn btn-outline-primary" (click)="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
+    Project Management
+  </div>
   <a class="logout" (click)="logout()">
     <i class="bi bi-box-arrow-left"></i> Logout
   </a>
 </nav>
+
 
 <!-- LAYOUT -->
 <div class="layout d-flex">
   <!-- SIDEBAR -->
   <div class="sidebar bg-light p-3" [class.sidebar-hidden]="!isSidebarVisible">
     <div class="user-info mb-4">
-      <h5>Welcome, {{ currentUser.username || 'User' }}</h5>
-      <small class="text-muted">Role: {{ currentUser.role || 'Viewer' }}</small>
+      <h5>Welcome, {{ currentUser.username || "User" }}</h5>
+      <small class="text-muted">Role: {{ currentUser.role || "Viewer" }}</small>
     </div>
 
     <nav class="nav flex-column">
-       <a class="nav-link" routerLink="/dashboard/adminDashboard" routerLinkActive="active">
+      <a
+        class="nav-link"
+        routerLink="/dashboard/adminDashboard"
+        routerLinkActive="active"
+      >
         <i class="bi bi-people"></i> Dashboard Management
       </a>
-      <a class="nav-link" routerLink="/dashboard/employees" routerLinkActive="active">
+      <a
+        class="nav-link"
+        routerLink="/dashboard/employees"
+        routerLinkActive="active"
+      >
         <i class="bi bi-people"></i> Employee Management
       </a>
-      <a class="nav-link" routerLink="/dashboard/projects" routerLinkActive="active">
+      <a
+        class="nav-link"
+        routerLink="/dashboard/projects"
+        routerLinkActive="active"
+      >
         <i class="bi bi-file-earmark-code"></i> Project Management
       </a>
-      <a class="nav-link" routerLink="/dashboard/tasks" routerLinkActive="active">
+      <a
+        class="nav-link"
+        routerLink="/dashboard/tasks"
+        routerLinkActive="active"
+      >
         <i class="bi bi-list-task"></i> Task Management
       </a>
-      <a class="nav-link" routerLink="/dashboard/timelog" routerLinkActive="active">
+      <a
+        class="nav-link"
+        routerLink="/dashboard/timelog"
+        routerLinkActive="active"
+      >
         <i class="bi bi-clock"></i> Time Tracking Management
       </a>
-       <a class="nav-link" routerLink="/dashboard/document" routerLinkActive="active">
+      <a
+        class="nav-link"
+        routerLink="/dashboard/document"
+        routerLinkActive="active"
+      >
         <i class="bi bi-files"></i> Document Management
       </a>
     </nav>

@@ -26,10 +26,11 @@
 
     <div>
       <label>Project</label>
-      <select formControlName="project_id">
-        <option value="" disabled>Select Project</option>
-        <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
-      </select>
+<select formControlName="project_id" (change)="onProjectChange($event)">
+      <option value="" disabled>Select Project</option>
+  <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
+</select>
+
     </div>
 
     <div>
@@ -42,7 +43,7 @@
 
     <div>
       <label>Due Date</label>
-      <input formControlName="due_date" type="date" [min]="minDate" required />
+    <input type="date" formControlName="due_date" class="form-input" [min]="minDate" [max]="maxDate" />
     </div>
 
     <div class="button-group">

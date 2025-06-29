@@ -16,6 +16,7 @@ export class ProjectManagementComponent implements OnInit {
   showForm = false;
   Statuses = ['not started', 'in progress', 'completed', 'on hold'];
   currentPage = 1;
+  minDate: string = '';
 
      filter = {
     status: ''
@@ -29,10 +30,15 @@ export class ProjectManagementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+     const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+   this.minDate = tomorrow.toISOString().split('T')[0];
     this.projectForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
-      status: ['not started']
+      status: ['not started'],
+      deadline: ['']
     });
     this.loadProjects();
   }
@@ -65,14 +71,26 @@ export class ProjectManagementComponent implements OnInit {
   }
 
   onEdit(project: Project): void {
-    if (this.editingProjectId === project.id && this.showForm) {
-      this.onCancelEdit();
-    } else {
-      this.projectForm.patchValue(project);
-      this.editingProjectId = project.id;
-      this.showForm = true;
-    }
+  if (this.editingProjectId === project.id && this.showForm) {
+    this.onCancelEdit();
+  } else {
+    const formattedDeadline = project.deadline
+      ? new Date(project.deadline).toISOString().split('T')[0]
+      : '';
+
+    this.projectForm.patchValue({
+      name: project.name,
+      description: project.description,
+      status: project.status || 'not started',
+      deadline: formattedDeadline
+    });
+
+    this.editingProjectId = project.id!;
+    this.showForm = true;
+
+    console.log('Patched deadline:', formattedDeadline); // ✅ Check this in the browser console
   }
+}
 
   onCancelEdit(): void {
     this.editingProjectId = null;
@@ -155,6 +173,7 @@ export class ProjectManagementComponent implements OnInit {
 
   loadProjects(): void {
     this.projectsService.getAllProjects().subscribe(data => {
+          console.log('Projects loaded:', data);
       this.projects = data;
     });
   }

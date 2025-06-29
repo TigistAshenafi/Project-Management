@@ -3,4 +3,5 @@ export interface Project {
   name: string;
   status: 'not started' | 'in progress' | 'completed' | 'on hold';
   description: string;
+   deadline?: string;
 }

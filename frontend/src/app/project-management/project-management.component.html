@@ -23,7 +23,10 @@
     <option value="on hold">On Hold</option>
   </select>
 </div>
-
+<div class="form-group">
+  <label>Deadline</label>
+<input type="date" formControlName="deadline" [min]="minDate" class="form-input" />
+</div>
     <div class="form-group">
       <label>Description</label>
       <textarea formControlName="description" class="form-textarea"></textarea>
@@ -54,6 +57,7 @@
     <tr>
       <th>Project Name</th>
       <th>Status</th>
+      <th>Deadline</th>
       <th>Description</th>
       <th>Actions</th>
     </tr>
@@ -61,7 +65,8 @@
   <tbody>
     <tr *ngFor="let project of projects | paginate: { itemsPerPage: 5, currentPage: currentPage} ">
       <td>{{ project.name }}</td>
-      <td>{{ project.status || 'not started' }}</td>
+      <td>{{ project.status || 'Not Started' }}</td>
+      <td>{{ project.deadline ? (project.deadline | date:'MM/dd/yyyy') : 'N/A' }}</td>
       <td>{{ project.description }}</td>
       <td class="item-buttons">
         <button (click)="onEdit(project)" class="btn btn-warning">Edit</button>

@@ -20,7 +20,9 @@ export class TaskManagementComponent implements OnInit {
   showForm = false;
   statuses = ['To Do', 'In Progress', 'Done'];
   currentPage = 1;
-  minDate!: string;
+  minDate: string = '';
+  maxDate: string = '';
+
 
    filter = {
     project_id: '',
@@ -59,17 +61,29 @@ export class TaskManagementComponent implements OnInit {
     this.showForm = true;
   }
 
-  onSubmit(): void {
-    if (this.taskForm.invalid)
-      return console.log('your data is not appropraite.');
-      ;
+onSubmit(): void {
+  if (this.taskForm.invalid) {
+    return console.log('Your data is not appropriate.');
+  }
 
-    if (this.editingTaskId !== null) {
-      this.updateTask();
-    } else {
-      this.addTasks();
+  const dueDateValue = this.taskForm.value.due_date;
+  if (dueDateValue) {
+    const dueDate = new Date(dueDateValue);
+    const minDate = new Date(this.minDate);
+    const maxDate = new Date(this.maxDate);
+
+    if (dueDate < minDate || dueDate > maxDate) {
+      this.toastr.error(`Due date must be between ${this.minDate} and ${this.maxDate}`, 'Invalid Due Date');
+      return;
     }
   }
+
+  if (this.editingTaskId !== null) {
+    this.updateTask();
+  } else {
+    this.addTasks();
+  }
+}
 
   onEdit(task: Task) {
     if (this.editingTaskId === task.id && this.showForm) {
@@ -213,5 +227,19 @@ addTasks(): void {
     };
     this.applyFilters();
   }
+
+onProjectChange(event: Event) {
+  const selectedProjectId = +(event.target as HTMLSelectElement).value;
+  const selectedProject = this.projects.find(p => p.id === selectedProjectId);
+
+  if (selectedProject && selectedProject.deadline) {
+   this.maxDate = new Date(selectedProject.deadline).toISOString().split('T')[0];
+    console.log('Max date set to:', this.maxDate);
+    console.log("Selected Project : ",selectedProject);
+    this.taskForm.patchValue({ project_id: selectedProjectId });
+  } else {
+    this.maxDate = '';
+  }
 }
 
+}

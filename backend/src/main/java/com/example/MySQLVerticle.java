@@ -72,6 +72,7 @@ public class MySQLVerticle extends AbstractVerticle {
                             name VARCHAR(255) UNIQUE NOT NULL,
                             description VARCHAR(255) NOT NULL,
                             status VARCHAR(50) DEFAULT 'not started',
+                            deadline DATE,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                         )
