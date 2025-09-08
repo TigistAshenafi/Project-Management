@@ -113,6 +113,49 @@ public class TimeLogHandler {
         });
     }
 
+    public void getRemainingTimeForToday(RoutingContext ctx) {
+        String userId = ctx.request().getParam("user_id");
+        String taskId = ctx.request().getParam("task_id");
+        String today = java.time.LocalDate.now().toString();
+        if (userId == null || taskId == null) {
+            ctx.response()
+                .setStatusCode(400)
+                .putHeader("Content-Type", "application/json")
+                .end(new JsonObject().put("error", "Missing user_id or task_id").encode());
+            return;
+        }
+        String query = "SELECT SUM(hours) as total_hours FROM time_logs WHERE user_id = ? AND task_id = ? AND date = ?";
+        dbClient.getConnection(ar -> {
+            if (ar.succeeded()) {
+                SQLConnection conn = ar.result();
+                conn.queryWithParams(query, new JsonArray().add(Integer.parseInt(userId)).add(Integer.parseInt(taskId)).add(today), res -> {
+                    if (res.succeeded()) {
+                        double totalLogged = 0.0;
+                        if (!res.result().getRows().isEmpty() && res.result().getRows().get(0).getValue("total_hours") != null) {
+                            totalLogged = ((Number)res.result().getRows().get(0).getValue("total_hours")).doubleValue();
+                        }
+                        double remaining = 8.0 - totalLogged;
+                        if (remaining < 0) remaining = 0;
+                        ctx.response()
+                            .putHeader("Content-Type", "application/json")
+                            .end(new JsonObject().put("remaining_hours", remaining).encode());
+                    } else {
+                        ctx.response()
+                            .setStatusCode(500)
+                            .putHeader("Content-Type", "application/json")
+                            .end(new JsonObject().put("error", "Internal server error").encode());
+                    }
+                    conn.close();
+                });
+            } else {
+                ctx.response()
+                    .setStatusCode(500)
+                    .putHeader("Content-Type", "application/json")
+                    .end(new JsonObject().put("error", "Internal server error").encode());
+            }
+        });
+    }
+
 
     public void updateTimeLog(RoutingContext ctx) {
             String id = ctx.pathParam("id");

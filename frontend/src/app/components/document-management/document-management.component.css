@@ -1,0 +1,58 @@
+
+/* Document form specific styles */
+.document-form-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Document list specific styles */
+.document-list-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Document upload specific styles */
+.upload-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 2px dashed var(--border-color);
+  text-align: center;
+  transition: var(--transition);
+}
+
+.upload-section:hover {
+  border-color: var(--primary-color);
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.file-input {
+  margin-right: 1rem;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: white;
+  transition: var(--transition);
+}
+
+.file-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+/* Document specific responsive adjustments */
+@media (max-width: 768px) {
+  .document-form-container,
+  .document-list-container,
+  .upload-section {
+    padding: 1rem;
+  }
+}

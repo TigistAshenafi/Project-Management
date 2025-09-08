@@ -22,9 +22,18 @@ export class AuthService {
     }
   }
 
+    getCurrentUserId(): number | null {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
+    // If token is JWT, decode payload
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.userId || null;
+  }
+
   login(credentials: { username: string; password: string }) {
     console.log("Sending login request with:", environment.apiBaseUrl+"/api/login");
-  
+
     return this.http.post(environment.apiBaseUrl+"/api/login", credentials).pipe(
       tap(
         (res: any) => {
@@ -39,7 +48,7 @@ export class AuthService {
       )
     ); // Don't forget to subscribe!
   }
-  
+
 
   register(user: { username: string; password: string }) {
     return this.http.post(environment.apiBaseUrl+"/api/register", user);

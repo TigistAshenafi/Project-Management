@@ -3,6 +3,7 @@ package com.example;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonArray;
 // import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.jdbc.JDBCClient;
@@ -24,8 +25,10 @@ public class AllRoute extends AbstractVerticle {
     private final DocumentHandler documentHandler;
     private final DashboardHandler dashboardHandler;
     private final JWTAuth jwtAuth;
+    private JDBCClient dbClient;
 
     public AllRoute(JDBCClient dbClient, JWTAuth jwtAuth) {
+        this.dbClient = dbClient;
         this.employeeHandler = new EmployeeHandler(dbClient);
         this.projectHandler = new ProjectHandler(dbClient);
         this.taskHandler = new TaskHandler(dbClient);
@@ -60,6 +63,8 @@ public class AllRoute extends AbstractVerticle {
 
         // JWT middleware for protected routes
         router.route().handler(JWTAuthHandler.create(jwtAuth));
+        router.route("/api/employees/*").handler(JWTAuthHandler.create(jwtAuth));
+        router.route("/api/projects/*").handler(JWTAuthHandler.create(jwtAuth));
 
         // --- Employee Routes ---
         router.get("/api/employees").handler(employeeHandler::getAllEmployees);
@@ -85,6 +90,7 @@ public class AllRoute extends AbstractVerticle {
         router.put("/api/time-logs/:id").handler(timeLogHandler::updateTimeLog);
         router.delete("/api/time-logs/:id").handler(timeLogHandler::deleteTimeLog);
                 // router.get("/api/time-logs/:task_id").handler(timeLogHandler::getByTaskId);
+        router.get("/api/time-logs/remaining").handler(timeLogHandler::getRemainingTimeForToday);
 
         // --- Document Routes ---
         // Upload: with BodyHandler that supports file upload
@@ -99,19 +105,22 @@ public class AllRoute extends AbstractVerticle {
 
         // --- Admin Dashboard Report Route ---
 router.get("/api/admin/dashboard/summary").handler(dashboardHandler::getDashboardSummary);
-router.get("/api/admin/dashboard/summary").handler(dashboardHandler::getDashboardSummary);
 
-
-
-        // router.get("/api/admin/dashboard")
-        //         .handler(ctx -> {
-        //             JsonObject user = ctx.user().principal();
-        //             if (!"admin".equals(user.getString("role"))) {
-        //                 ctx.response().setStatusCode(403).end("Forbidden");
-        //             } else {
-        //                 dashboardHandler.handle(ctx);
-        //             }
-        //         });
+router.get("/api/notifications/:userId").handler(ctx -> {
+    String userId = ctx.pathParam("userId"); // as String since it's UUID
+    
+    String query = "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC";
+    
+    dbClient.queryWithParams(query, new JsonArray().add(userId), res -> {
+        if (res.succeeded()) {
+            ctx.response()
+                .putHeader("Content-Type", "application/json")
+                .end(new JsonArray(res.result().getRows()).encode());
+        } else {
+            ctx.fail(res.cause());
+        }
+    });
+});
 
         // Start HTTP server
         vertx.createHttpServer()

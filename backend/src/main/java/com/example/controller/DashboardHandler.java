@@ -108,7 +108,13 @@ public class DashboardHandler {
       conn.query(sql, res -> {
         if (res.succeeded()) {
           JsonObject json = new JsonObject();
-          res.result().getRows().forEach(row -> json.put(row.getString(column), row.getInteger("total")));
+          res.result().getRows().forEach(row -> {
+            String key = row.getString(column);
+            Integer value = row.getInteger("total");
+            if (key != null && value != null) {
+              json.put(key, value);
+            }
+          });
           promise.complete(json);
         } else {
           promise.fail(res.cause());

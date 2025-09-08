@@ -1,0 +1,56 @@
+<div *ngIf="open" class="notif-overlay" (click)="close.emit()">
+  <div class="notif-panel" (click)="$event.stopPropagation()">
+    <div class="notif-header">Notifications</div>
+
+    <div class="notif-section">
+      <div class="notif-section-title">Tasks due exactly in 2 days</div>
+      <div *ngFor="let t of tasksDueExactlyTwoDaysList" class="notif-item">
+        <i class="bi bi-check2-square"></i>
+        <div class="notif-body">
+          <div class="notif-title">{{ t.title }}</div>
+          <div class="notif-meta">due in 2 days</div>
+        </div>
+      </div>
+      <div *ngIf="tasksDueExactlyTwoDaysList.length === 0" class="notif-empty">None</div>
+    </div>
+
+    <div class="notif-section">
+      <div class="notif-section-title">Tasks due in less than 2 days</div>
+      <div *ngFor="let t of tasksDueLessThanTwoDaysList" class="notif-item">
+        <i class="bi bi-exclamation-triangle text-warning"></i>
+        <div class="notif-body">
+          <div class="notif-title">{{ t.title }}</div>
+          <div class="notif-meta">approaching</div>
+        </div>
+      </div>
+      <div *ngIf="tasksDueLessThanTwoDaysList.length === 0" class="notif-empty">None</div>
+    </div>
+
+    <div class="notif-section">
+      <div class="notif-section-title">Projects deadline within 1 week</div>
+      <div *ngFor="let p of projectsDueWithinWeekList" class="notif-item">
+        <i class="bi bi-journal-check"></i>
+        <div class="notif-body">
+          <div class="notif-title">{{ p.name }}</div>
+          <div class="notif-meta">upcoming deadline</div>
+        </div>
+      </div>
+      <div *ngIf="projectsDueWithinWeekList.length === 0" class="notif-empty">None</div>
+    </div>
+
+    <div class="notif-section">
+      <div class="notif-section-title">System</div>
+      <div *ngIf="loading" class="notif-empty">Loading notifications...</div>
+      <div *ngIf="!loading && notifications.length === 0" class="notif-empty">No notifications</div>
+      <div *ngFor="let note of notifications" class="notif-item" [class.unread]="!note.is_read">
+        <span *ngIf="!note.is_read" class="notif-dot"></span>
+        <i class="bi bi-bell"></i>
+        <div class="notif-body">
+          <div class="notif-title">{{ note.message }}</div>
+          <div class="notif-meta">{{ note.created_at | date: 'short' }}</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

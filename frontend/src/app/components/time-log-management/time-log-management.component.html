@@ -1,0 +1,123 @@
+<div class="time-log-management-container">
+  <h1 class="list-title">Time Log Management</h1>
+
+  <!-- Button to show the form -->
+  <button class="btn btn-success" *ngIf="!formVisible" (click)="formVisible = true; isEditMode = false">Add Log Time</button>
+
+  <!-- Filters Section -->
+  <div class="filters" *ngIf="!formVisible">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label class="filter-label">Task:</label>
+        <select [(ngModel)]="filter.task_id" (change)="applyFilters()" class="filter-control">
+          <option value="">All</option>
+          <option *ngFor="let task of tasks" [value]="task.id">{{ task.title }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Date:</label>
+        <input type="date" [(ngModel)]="filter.Date" (change)="applyFilters()" class="filter-control">
+      </div>
+      <button (click)="clearFilters()">x</button>
+    </div>
+  </div>
+
+  <!-- Time Log Form -->
+  <form
+    *ngIf="formVisible"
+    (ngSubmit)="submitLog()"
+    #timeForm="ngForm"
+    class="time-log-form-container"
+  >
+    <h3>{{ isEditMode ? 'Edit Time Log' : 'Add New Time Log' }}</h3>
+
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input
+        type="date"
+        [(ngModel)]="log.date"
+        name="date"
+        [min]="minDate"
+        class="form-control"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Hours</label>
+      <input
+        type="number"
+        [(ngModel)]="log.hours"
+        name="hours"
+        min="0.1"
+        step="0.1"
+        class="form-control"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tasks</label>
+      <select [(ngModel)]="log.task_id" name="task_id" class="form-control" required>
+        <option value="" disabled>Select Task</option>
+        <option *ngFor="let task of tasks" [value]="task.id">
+          {{ task.title }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea [(ngModel)]="log.description" name="description" class="form-control"></textarea>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" [disabled]="!timeForm.form.valid"> {{ isEditMode ? 'Update' : 'Log Time' }} </button>
+      <button
+        type="button"
+        (click)="cancelEdit()">Cancel
+      </button>
+    </div>
+  </form>
+
+  <!-- Time Log List -->
+  <div class="time-log-list-container">
+    <h3>Time Logs</h3>
+    <div class="time-log-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Hours</th>
+            <th>Task</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let log of logs | paginate: { itemsPerPage: 5, currentPage: currentPage }
+            "
+          >
+            <td>{{ log.date | date:'MM/dd/yyyy' }}</td>
+            <td>
+              <span class="duration">{{ log.hours }} hrs</span>
+            </td>
+            <td>{{ getTaskTitle(log.task_id) }}</td>
+            <td>{{ log.description }}</td>
+            <td class="item-buttons">
+              <button  (click)="startEdit(log)"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button  (click)="deleteLog(log.id!)"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noTimeLogs>
+      <p class="alert alert-info">No time logs found</p>
+    </ng-template>
+    <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+  </div>
+</div>

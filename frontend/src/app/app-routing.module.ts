@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { ErrorComponent } from './error/error.component';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { RoleAssignmentComponent } from './role-assignment/role-assignment.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { RoleAssignmentComponent } from './components/role-assignment/role-assignment.component';
 import { RoleGuard } from './role.guard';
 import { AuthGuard } from './auth.guard';
-import { ProjectManagementComponent } from './project-management/project-management.component';
-import { TaskManagementComponent } from './task-management/task-management.component';
-import { EmployeeManagementComponent } from './employee-management/employee-management.component';
-import { TimeLogManagementComponent } from './time-log-management/time-log-management.component';
-import { DocumentManagementComponent } from './document-management/document-management.component';
+import { ProjectManagementComponent } from './components/project-management/project-management.component';
+import { TaskManagementComponent } from './components/task-management/task-management.component';
+import { EmployeeManagementComponent } from './components/employee-management/employee-management.component';
+import { TimeLogManagementComponent } from './components/time-log-management/time-log-management.component';
+import { DocumentManagementComponent } from './components/document-management/document-management.component';
 
 
 export const routes: Routes = [
@@ -35,7 +35,7 @@ export const routes: Routes = [
       },
       {path: 'timelog', component: TimeLogManagementComponent},
       {path: 'document', component: DocumentManagementComponent},
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: '', redirectTo: 'adminDashboard', pathMatch: 'full' }
     ]
   },
   { path: '404', component: ErrorComponent },

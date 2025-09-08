@@ -1,0 +1,40 @@
+<div class="login-container">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="text-center mb-4">Login</h2>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" formControlName="username">
+            <div *ngIf="loginForm.get('username')?.invalid && (loginForm.get('username')?.dirty || loginForm.get('username')?.touched)"
+                 class="text-danger">
+              <small *ngIf="loginForm.get('username')?.errors?.['required']">
+                Username is required
+              </small>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <div class="password-input-container">
+              <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="password" formControlName="password">
+              <button type="button" class="password-toggle-btn" (click)="togglePasswordVisibility()">
+                <i class="bi" [class]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+              </button>
+            </div>
+            <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)"
+                 class="text-danger">
+              <small *ngIf="loginForm.get('password')?.errors?.['required']">
+                Password is required
+              </small>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">Login</button>
+          <div class="text-center mt-3">
+            <a routerLink="/register" class="text-decoration-none">Create new account</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,513 @@
+/* Time Log Management Component Styles */
+/* Using shared styles from shared-styles.css */
+
+/* === MAIN CONTAINER === */
+.time-log-management {
+  padding: 1rem;
+}
+/* 
+.list-title {
+  color: var(--text-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 1rem;
+} */
+
+/* === FORM STYLES === */
+.time-log-form-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-color);
+}
+
+.time-log-form-container h3 {
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 0.5rem;
+}
+
+/* Form fields styling */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.form-control {
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  transition: var(--transition);
+  background: white;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.25);
+  outline: none;
+}
+
+.form-control:disabled {
+  background: var(--light-color);
+  color: var(--text-muted);
+}
+
+/* Time input specific styling */
+.time-input-group {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.time-input {
+  flex: 1;
+  min-width: 120px;
+}
+
+.time-separator {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+/* Duration display */
+.duration-display {
+  background: var(--light-color);
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  text-align: center;
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+/* Form buttons */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: var(--secondary-color);
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+/* .btn-danger {
+  background: var(--danger-color);
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  transition: var(--transition);
+} */
+
+/* .btn-danger:hover {
+  background: var(--danger-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+} */
+
+/* === TIME LOG LIST STYLES === */
+.time-log-list-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-color);
+}
+
+.time-log-list-container h3 {
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 0.5rem;
+}
+
+/* Time log list table */
+.time-log-list {
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.time-log-list table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.time-log-list th {
+  /* background: var(--primary-color); */
+  color: black;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.time-log-list td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.time-log-list tr:hover {
+  background: var(--light-color);
+}
+
+/* Time log status indicators */
+.time-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-active {
+  background: rgba(40, 167, 69, 0.2);
+  color: #155724;
+  border: 1px solid #28a745;
+}
+
+.status-paused {
+  background: rgba(255, 193, 7, 0.2);
+  color: #856404;
+  border: 1px solid #ffc107;
+}
+
+.status-completed {
+  background: rgba(108, 117, 125, 0.2);
+  color: #495057;
+  border: 1px solid #6c757d;
+}
+
+/* Duration formatting */
+.duration {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: var(--primary-color);
+  background: rgba(25, 118, 210, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Time log action buttons */
+.time-log-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.btn-edit {
+  /* background: var(--primary-color); */
+  color: #000;
+}
+
+.btn-edit:hover {
+  /* background: var(--primary-dark); */
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  /* background: var(--danger-color); */
+  color: black;
+}
+
+.btn-delete:hover {
+  background: var(--danger-dark);
+  transform: translateY(-1px);
+}
+
+.btn-view {
+  background: var(--info-color);
+  color: white;
+}
+
+.btn-view:hover {
+  background: var(--info-dark);
+  transform: translateY(-1px);
+}
+
+.btn-pause {
+  background: var(--warning-color);
+  color: white;
+}
+
+.btn-pause:hover {
+  background: var(--warning-dark);
+  transform: translateY(-1px);
+}
+
+.btn-resume {
+  background: var(--success-color);
+  color: white;
+}
+
+.btn-resume:hover {
+  background: var(--success-dark);
+  transform: translateY(-1px);
+}
+
+/* === FILTERS AND SEARCH === */
+.time-log-filters {
+  background: var(--light-color);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+.filter-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+.filter-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.filter-control {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0.5rem;
+  background: white;
+  color: var(--text-primary);
+}
+
+/* Date range picker styling */
+.date-range-picker {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.date-input {
+  min-width: 150px;
+}
+
+/* === SUMMARY CARDS === */
+.time-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.summary-card h4 {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.summary-card .value {
+  color: var(--primary-color);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.summary-card .change {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.change.positive {
+  color: var(--success-color);
+}
+
+.change.negative {
+  color: var(--danger-color);
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+  .time-log-management {
+    padding: 0.5rem;
+  }
+
+  /* .list-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  } */
+
+  .time-log-form-container,
+  .time-log-list-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .time-log-form-container h3,
+  .time-log-list-container h3 {
+    font-size: 1.25rem;
+  }
+
+  .time-input-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .time-input {
+    min-width: auto;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    width: 100%;
+    text-align: center;
+  }
+
+  .time-log-list {
+    font-size: 0.9rem;
+  }
+
+  .time-log-list th,
+  .time-log-list td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    min-width: auto;
+  }
+
+  .time-log-actions {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .btn-sm {
+    width: 100%;
+    text-align: center;
+  }
+
+  .time-summary {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .date-range-picker {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .time-log-form-container,
+  .time-log-list-container {
+    padding: 0.75rem;
+    margin: 0.5rem;
+  }
+
+  .time-log-list th,
+  .time-log-list td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  .time-status {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .duration {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .summary-card {
+    padding: 1rem;
+  }
+
+  .summary-card .value {
+    font-size: 1.5rem;
+  }
+}

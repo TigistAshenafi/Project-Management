@@ -1,0 +1,184 @@
+<div class="task-container">
+  <h1 class="list-title">Task Management</h1>
+
+  <button class="btn btn-success" (click)="toggleForm()" id="btn">
+    {{ editingTaskId ? 'Update Task' :  (showForm ? 'Cancel Adding' :  'Add Task' )}}
+  </button>
+
+  <!-- Task Form -->
+  <form *ngIf="showForm" [formGroup]="taskForm" (ngSubmit)="editingTaskId ? updateTask() : addTasks()" class="task-form-container">
+    <h3>{{ editingTaskId ? 'Edit Task' : 'Add New Task' }}</h3>
+
+    <div class="form-group">
+      <label class="form-label">Title</label>
+      <input formControlName="title" type="text" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea formControlName="description" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select formControlName="status" class="form-control">
+        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Project</label>
+      <select formControlName="project_id" (change)="onProjectChange($event)" class="form-control">
+        <option value="" disabled>Select Project</option>
+        <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Assigned to</label>
+      <select formControlName="assigned_to" class="form-control">
+        <option value="" disabled>Select Employee</option>
+        <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Due Date</label>
+      <input type="date" formControlName="due_date" class="form-control" [min]="minDate" [max]="maxDate" />
+    </div>
+
+    <div class="button-group">
+      <button type="submit">{{ editingTaskId ? 'Update' : 'Create' }}</button>
+      <button type="button" *ngIf="editingTaskId" (click)="toggleForm()">Cancel</button>
+    </div>
+  </form>
+
+  <!-- View Toggle -->
+  <div class="view-toggle">
+    <button class="btn btn-outline-primary" [class.active]="viewMode === 'table'" (click)="setViewMode('table')">
+      <i class="fas fa-bars" id="btnn"></i>
+    </button>
+    <button class="btn btn-outline-primary" [class.active]="viewMode === 'card'" (click)="setViewMode('card')">
+      <i class="fas fa-th-large" id="btnn"></i>
+    </button>
+  </div>
+
+  <!-- Filters Section -->
+  <div *ngIf="viewMode === 'table' && !showForm" class="filters">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label class="filter-label">Project:</label>
+        <select [(ngModel)]="filter.project_id" (change)="applyFilters()" class="filter-control" aria-placeholder="Select Project">
+          <option value="">All</option>
+          <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Status:</label>
+        <select [(ngModel)]="filter.status" (change)="applyFilters()" class="filter-control">
+          <option value="">All</option>
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Employee:</label>
+        <select [(ngModel)]="filter.assigned_to" (change)="applyFilters()" class="filter-control">
+          <option value="">All</option>
+          <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
+        </select>
+      </div>
+      <button (click)="clearFilters()">x</button>
+    </div>
+  </div>
+
+  <!-- Table View -->
+  <div *ngIf="viewMode === 'table'" class="task-list-container">
+    <h3>Task List</h3>
+    <div class="task-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Project</th>
+            <th>Employee</th>
+            <th>Description</th>
+            <th>Due-Date</th>
+            <!-- <th>Remaining Hours (Today)</th> -->
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let task of tasks | paginate: { itemsPerPage: 5, currentPage: currentPage}">
+            <td>{{ task.title }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="{
+                'pending': task.status === 'To Do',
+                'in-progress': task.status === 'In Progress',
+                'completed': task.status === 'Done',
+                'status-overdue': task.status === 'Blocked'
+              }">{{ task.status }}</span>
+            </td>
+            <td>{{ getProjectName(task.project_id) }}</td>
+            <td>{{ getEmployeeName(task.assigned_to) }}</td>
+            <td>{{ task.description }}</td>
+            <td>{{ task.due_date | date: 'shortDate' }}</td>
+            <!-- <td>
+              <ng-container *ngIf="remainingHours[task.id] !== undefined">
+                <span *ngIf="remainingHours[task.id] >= 0">{{ remainingHours[task.id] }} hrs</span>
+                <span *ngIf="remainingHours[task.id] < 0">N/A</span>
+              </ng-container>
+              <ng-container *ngIf="remainingHours[task.id] === undefined">
+                ...
+              </ng-container>
+            </td> -->
+             <td class="item-buttons">
+              <button  (click)="onEdit(task)"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button  (click)="onDelete(task.id)"><i class="fa-solid fa-trash"></i></button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noTasks>
+      <p class="alert alert-info">No tasks found</p>
+    </ng-template>
+    <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+  </div>
+
+  <!-- Card View -->
+  <div *ngIf="viewMode === 'card'" class="card-grid">
+    <div class="task-card" *ngFor="let task of tasks">
+      <h3>{{ task.title }}</h3>
+      <p><strong>Status:</strong>
+        <span class="status-badge" [ngClass]="{
+          'pending': task.status === 'To Do',
+          'in-progress': task.status === 'In Progress',
+          'completed': task.status === 'Done',
+          'overdue': task.status === 'Blocked'
+        }">{{ task.status }}</span>
+      </p>
+      <p><strong>Project:</strong> {{ getProjectName(task.project_id) }}</p>
+      <p><strong>Employee:</strong> {{ getEmployeeName(task.assigned_to) }}</p>
+      <p><strong>Description:</strong> {{ task.description }}</p>
+      <p><strong>Due-Date:</strong> {{ task.due_date | date: 'shortDate' }}</p>
+      <!-- <p><strong>Remaining Hours (Today):</strong>
+        <ng-container *ngIf="remainingHours[task.id] !== undefined">
+          <span *ngIf="remainingHours[task.id] >= 0">{{ remainingHours[task.id] }} hrs</span>
+          <span *ngIf="remainingHours[task.id] < 0">N/A</span>
+        </ng-container>
+        <ng-container *ngIf="remainingHours[task.id] === undefined">
+          ...
+        </ng-container>
+      </p> -->
+
+        <div class="item-buttons">
+          <button (click)="onEdit(task)"><i class="fa-solid fa-pen-to-square"></i></button>
+          <button (click)="onDelete(task.id)"><i class="fa-solid fa-trash"></i></button>
+        </div>
+    </div>
+  </div>
+</div>

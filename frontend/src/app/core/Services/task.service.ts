@@ -37,6 +37,10 @@ export class TaskService {
     return this.http.get<Project[]>(`${this.baseUrl}/projects`);
   }
 
+  getRemainingHours(userId: number, taskId: number) {
+    return this.http.get<{remaining_hours: number}>(`${this.baseUrl}/time-logs/remaining?user_id=${userId}&task_id=${taskId}`, this.getAuth());
+  }
+
   private getAuth() {
     return {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }

@@ -1,76 +1,173 @@
 <!-- NAVBAR -->
-<nav
-  class="navbar navbar-light bg-light d-flex justify-content-between align-items-center px-3"
->
-  <div class="title">
-    <button class="btn btn-outline-primary" (click)="toggleSidebar()">
-      <i class="bi bi-list"></i>
-    </button>
-    Project Management
-  </div>
-  <a class="logout" (click)="logout()">
-    <i class="bi bi-box-arrow-left"></i> Logout
-  </a>
-</nav>
+<header id="nav" class="navbar-container">
+  <nav class="navbar navbar-light bg-light d-flex justify-content-between align-items-center px-3">
+    <!-- Left side: Menu toggle and brand -->
+    <div class="navbar-brand-section d-flex align-items-center">
+       <button
+          class="btn btn-outline-primary me-3 nav-toggle"
+          (click)="toggleSidebar()"
+          aria-label="Toggle sidebar"
+          [attr.aria-expanded]="isSidebarVisible"
+          aria-controls="sidebar">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="title d-flex align-items-center">
+        <!-- <i class="bi bi-kanban me-2 text-primary"></i> -->
+        <span class="brand-text">Project Management</span>
+      </div>
+    </div>
 
+    <!-- Center: Breadcrumb navigation -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a routerLink="/dashboard" class="text-decoration-none">
+            <i class="bi bi-house"></i> Home
+          </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {{ getCurrentPageTitle() }}
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Right side: Notifications and user menu -->
+    <div class="navbar-actions d-flex align-items-center gap-3">
+      <!-- Notifications -->
+      <div class="notification-section position-relative">
+        <button
+          class="btn btn-outline-secondary notification-btn"
+          aria-label="Notifications"
+          (click)="toggleNotifications($event)"
+          [class.active]="showNotifications">
+          <i class="fa-solid fa-bell"></i>
+          <span
+            *ngIf="unreadNotificationCount > 0"
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge"
+            [attr.aria-label]="unreadNotificationCount + ' items due soon'">
+            {{ unreadNotificationCount }}
+          </span>
+        </button>
+
+        <app-notification-list
+          [userId]="currentUserId || ''"
+          [open]="showNotifications"
+          [tasksDueExactlyTwoDaysList]="tasksDueExactlyTwoDaysList"
+          [tasksDueLessThanTwoDaysList]="tasksDueLessThanTwoDaysList"
+          [projectsDueWithinWeekList]="projectsDueWithinWeekList"
+          (close)="showNotifications = false">
+        </app-notification-list>
+      </div>
+
+      <!-- User profile dropdown -->
+      <div class="user-profile dropdown" ngbDropdown>
+        <div class="button-group" >
+        <button (click)="logout()">
+          <i class="bi bi-box-arrow-left me-2"></i>Logout
+        </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
 
 <!-- LAYOUT -->
 <div class="layout d-flex">
   <!-- SIDEBAR -->
-  <div class="sidebar bg-light p-3" [class.sidebar-hidden]="!isSidebarVisible">
-    <div class="user-info mb-4">
-      <h5>Welcome, {{ currentUser.username || "User" }}</h5>
-      <small class="text-muted">Role: {{ currentUser.role || "Viewer" }}</small>
+  <aside
+    id="sidebar"
+    class="sidebar bg-light"
+    [class.sidebar-hidden]="!isSidebarVisible"
+    role="navigation"
+    aria-label="Main navigation">
+
+    <!-- User info section -->
+    <div class="user-info-section p-3 border-bottom">
+      <div class="user-info d-flex align-items-center">
+        <div class="user-avatar-large me-3">
+          <i class="bi bi-person-circle"></i>
+        </div>
+        <div class="user-details">
+          <h3 class="mb-1">{{ currentUser.username || "User" }}</h3>
+          <span class="badge bg-primary">{{ currentUser.role || "Viewer" }}</span>
+        </div>
+      </div>
     </div>
 
-    <nav class="nav flex-column">
-      <a
-        class="nav-link"
-        routerLink="/dashboard/adminDashboard"
-        routerLinkActive="active"
-      >
-        <i class="bi bi-people"></i> Dashboard Management
-      </a>
-      <a
-        class="nav-link"
-        routerLink="/dashboard/employees"
-        routerLinkActive="active"
-      >
-        <i class="bi bi-people"></i> Employee Management
-      </a>
-      <a
-        class="nav-link"
-        routerLink="/dashboard/projects"
-        routerLinkActive="active"
-      >
-        <i class="bi bi-file-earmark-code"></i> Project Management
-      </a>
-      <a
-        class="nav-link"
-        routerLink="/dashboard/tasks"
-        routerLinkActive="active"
-      >
-        <i class="bi bi-list-task"></i> Task Management
-      </a>
-      <a
-        class="nav-link"
-        routerLink="/dashboard/timelog"
-        routerLinkActive="active"
-      >
-        <i class="bi bi-clock"></i> Time Tracking Management
-      </a>
-      <a
-        class="nav-link"
-        routerLink="/dashboard/document"
-        routerLinkActive="active"
-      >
-        <i class="bi bi-files"></i> Document Management
-      </a>
+    <!-- Navigation menu -->
+    <nav class="sidebar-nav p-3" aria-label="Sidebar navigation">
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a
+            class="nav-link d-flex align-items-center"
+            routerLink="/dashboard/adminDashboard"
+            routerLinkActive="active"
+            aria-current="page">
+            <i class="bi bi-speedometer2 me-3"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link d-flex align-items-center"
+            routerLink="/dashboard/employees"
+            routerLinkActive="active">
+            <i class="bi bi-people me-3"></i>
+            <span>Employees</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link d-flex align-items-center"
+            routerLink="/dashboard/projects"
+            routerLinkActive="active">
+            <i class="bi bi-kanban me-3"></i>
+            <span>Projects</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link d-flex align-items-center"
+            routerLink="/dashboard/tasks"
+            routerLinkActive="active">
+            <i class="bi bi-list-task me-3"></i>
+            <span>Tasks</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link d-flex align-items-center"
+            routerLink="/dashboard/timelog"
+            routerLinkActive="active">
+            <i class="bi bi-clock me-3"></i>
+            <span>Time Tracking</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link d-flex align-items-center"
+            routerLink="/dashboard/document"
+            routerLinkActive="active">
+            <i class="bi bi-files me-3"></i>
+            <span>Documents</span>
+          </a>
+        </li>
+      </ul>
     </nav>
-  </div>
+  </aside>
 
   <!-- MAIN CONTENT -->
-  <div class="content p-4">
-    <router-outlet></router-outlet>
-  </div>
+  <main class="content p-4" role="main" [class.sidebar-hidden]="!isSidebarVisible">
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
+
+<!-- Mobile overlay for sidebar -->
+<div
+  *ngIf="isSidebarVisible"
+  class="sidebar-overlay d-md-none"
+  (click)="toggleSidebar()"
+  aria-label="Close sidebar">
 </div>

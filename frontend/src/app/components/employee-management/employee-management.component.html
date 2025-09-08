@@ -1,0 +1,83 @@
+<div class="employee-container">
+  <h1 class="list-title">Employee Management</h1>
+  <!-- Toggle Add/Edit Button -->
+  <button class="btn btn-success" (click)="toggleAddForm()" id="btn">
+    {{ editMode ? ' Editing Employee' : (showForm ? 'Cancel' : 'Add Employee') }}
+  </button>
+  <!-- Show form only if showForm is true -->
+  <form *ngIf="showForm" [formGroup]="employeeForm" (ngSubmit)=" selectedEmployeeId ? updateEmployee() : createEmployee()" class="employee-form">
+    <h2 class="form-title">{{ editMode ? ' Edit Employee' : 'Add New Employee' }}</h2>
+
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input formControlName="name" class="form-input" id="name" />
+      <div *ngIf="formControls['name'].invalid && (formControls['name'].dirty || formControls['name'].touched)" class="text-danger">
+        <small *ngIf="formControls['name'].errors?.['required']">Name is required</small>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="position">Position</label>
+      <input formControlName="position" class="form-input" id="position" />
+      <div *ngIf="formControls['position'].invalid && (formControls['position'].dirty || formControls['position'].touched)" class="text-danger">
+        <small *ngIf="formControls['position'].errors?.['required']">Position is required</small>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Job Type</label>
+      <select formControlName="job_type" class="form-control">
+        <option *ngFor="let job_type of job_types" [value]="job_type">{{ job_type }}</option>
+      </select>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" [disabled]="employeeForm.invalid">
+        {{ editMode ? 'Update' : 'Create' }}
+      </button>
+      <button type="button" *ngIf="editMode" (click)="onCancel()">
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <div class="employee-list">
+    <div class="filters" *ngIf="!showForm">
+  <label>
+    Name:
+    <input type="text" [(ngModel)]="filter.name" (input)="applyFilters()" placeholder="Search by name">
+  </label>
+  <label>
+    Position:
+    <input type="text" [(ngModel)]="filter.position" (input)="applyFilters()" placeholder="Search by position">
+  </label>
+  <button (click)="clearFilters()">x</button>
+</div>
+
+    <table class="employee-list">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Job type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+       <tr *ngFor="let employee of filteredEmployees | paginate: { itemsPerPage: 5, currentPage: currentPage }">
+          <td>{{ employee.name }}</td>
+          <td>{{ employee.position }}</td>
+          <td>{{ employee.job_type }}</td>
+          <td class="item-buttons">
+            <button (click)="onEdit(employee)"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button  *ngIf="employee.id" (click)="onDelete(employee.id)"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noEmployees>
+      <p class="alert alert-info">No employees found.</p>
+    </ng-template>
+    <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+</div>
+</div>

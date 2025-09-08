@@ -1,0 +1,86 @@
+<div class="document-container">
+  <h2 class="list-title">Document Management</h2>
+
+  <!-- Toggle Upload Form -->
+  <button class="btn btn-success mb-3" (click)="toggleForm()">
+    {{ showForm ? 'Cancel Uploading' : 'Upload Document' }}
+  </button>
+
+  <!-- File Upload Section (Toggleable) -->
+  <div class="mb-3" *ngIf="showForm">
+    <label for="fileUpload" class="form-label">Select File to Upload:</label>
+    <input type="file" id="fileUpload" class="form-control" (change)="onFileSelected($event)" />
+
+    <div class="mt-2">
+      <label>Project</label>
+      <select [(ngModel)]="project_id" class="form-control" (change)="loadDocuments()">
+        <option [ngValue]="null">Select Project</option>
+        <option *ngFor="let project of projects" [ngValue]="project.id">{{ project.name }}</option>
+      </select>
+    </div>
+
+    <button
+      class="btn btn-success mt-2"
+      (click)="onUpload()"
+      [disabled]="uploading || !selectedFile">
+      {{ uploading ? 'Uploading...' : 'Upload' }}
+    </button>
+
+    <!-- Progress Bar -->
+    <div *ngIf="uploading" class="progress mt-2">
+      <div
+        class="progress-bar progress-bar-striped progress-bar-animated"
+        role="progressbar"
+        [style.width.%]="uploadProgress"
+        [attr.aria-valuenow]="uploadProgress"
+        [attr.aria-valuemin]="0"
+        [attr.aria-valuemax]="100">
+        {{ uploadProgress }}%
+      </div>
+    </div>
+  </div>
+
+<div class="filters" *ngIf="!showForm">
+
+  <label>Project:
+    <select [(ngModel)]="filter.project_id" (change)="applyFilters()">
+      <option value="">All</option>
+      <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
+    </select>
+  </label>
+
+  <button (click)="clearFilters()">x</button>
+</div>
+  <!-- Document List Section -->
+  <div  class="document-list">
+
+    <table class="document-list" *ngIf="documents.length > 0; else noDocs">
+      <thead >
+        <tr>
+          <th>ID</th>
+          <th>File Name</th>
+          <th>Project</th>
+          <th>Uploaded Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doc of documents | paginate: { itemsPerPage: 5, currentPage: currentPage }">
+          <td>{{ doc.id }}</td>
+          <td>{{ doc.file_name }}</td>
+          <td>{{ getProjectName(doc.project_id) }}</td>
+          <td>{{ doc.upload_date | date: 'short' }}</td>
+          <td class="item-buttons">
+            <button (click)="onDownload(doc.id)"><i class="fa-solid fa-download"></i></button>
+            <button (click)="onDelete(doc.id)"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noDocs>
+      <div class="alert alert-info">No documents available for this project.</div>
+    </ng-template>
+
+    <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+  </div>
+</div>

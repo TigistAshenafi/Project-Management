@@ -47,11 +47,11 @@ public class EmployeeHandler {
             System.out.println("Received employee: " + employee.encodePrettily());
     
             dbClient.updateWithParams(
-                "INSERT INTO employees(name, position, salary) VALUES (?, ?, ?)",
+                "INSERT INTO employees(name, position, job_type) VALUES (?, ?, ?)",
                 new JsonArray()
                     .add(employee.getString("name"))
                     .add(employee.getString("position"))
-                    .add(employee.getDouble("salary")),
+                    .add(employee.getString("job_type")),
                 res -> {
                     if (res.succeeded()) {
                         long generatedId = res.result().getKeys().getLong(0); // Get auto-generated ID
@@ -86,11 +86,11 @@ public class EmployeeHandler {
         JsonObject employee = context.body().asJsonObject();
     
         dbClient.updateWithParams(
-            "UPDATE employees SET name = ?, position = ?, salary = ? WHERE id = ?",
+            "UPDATE employees SET name = ?, position = ?, job_type = ? WHERE id = ?",
             new JsonArray()
                 .add(employee.getString("name"))
                 .add(employee.getString("position"))
-                .add(employee.getDouble("salary"))
+                .add(employee.getString("job_type"))
                 .add(id),
             res -> {
                 if (res.succeeded()) {

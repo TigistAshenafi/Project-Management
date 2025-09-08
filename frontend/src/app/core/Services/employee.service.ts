@@ -7,9 +7,16 @@ import { Employee } from '../models/employee.model';
 @Injectable({ providedIn: 'root' })
 export class EmployeeService {
   private baseUrl = `${environment.ApiUrl}/api/employees`;
+  private user: { id: number; name: string } | null = null;
 
   constructor(private http: HttpClient) {}
 
+    setUser(user: { id: number; name: string }) {
+    this.user = user;
+  }
+  getUserId(): number | null {
+    return this.user ? this.user.id : null;
+  }
   getAllEmployee(): Observable<Employee[]> {
     return this.http.get<Employee[]>(this.baseUrl);
   }

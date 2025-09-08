@@ -1,0 +1,109 @@
+/* Register Component Styles */
+/* Using shared styles from shared-styles.css */
+
+.register-container {
+  max-width: 450px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.register-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.register-header h2 {
+  color: var(--text-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.register-header p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.register-form {
+  /* Inherits from .module-form */
+}
+
+.register-form .form-group {
+  /* Inherits from .form-group */
+}
+
+.register-form .form-input {
+  /* Inherits from .form-input */
+}
+
+.register-form .form-input:focus {
+  /* Inherits from .form-input:focus */
+}
+
+.register-submit {
+  width: 100%;
+  margin-top: 1rem;
+  /* Inherits from .btn-primary */
+}
+
+.register-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.register-footer p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.register-footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.register-footer a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+.register-error {
+  /* Inherits from .error */
+  margin-bottom: 1rem;
+}
+
+.register-success {
+  /* Inherits from .success */
+  margin-bottom: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .register-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .register-header h2 {
+    font-size: 1.75rem;
+  }
+}
