@@ -32,4 +32,12 @@ export class EmployeeService {
   deleteEmployee(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  updateEmployeeRole(id: number, role: string): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/${id}/role`, { role });
+  }
+
+  resendInvite(id: number): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/${id}/resend-invite`, {});
+  }
 }

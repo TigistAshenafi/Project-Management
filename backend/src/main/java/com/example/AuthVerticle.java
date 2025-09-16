@@ -43,6 +43,7 @@ public class AuthVerticle extends AbstractVerticle {
         // Auth Endpoints
         router.post("/api/login").handler(this::handleLogin);
         router.post("/api/register").handler(this::handleRegister);
+        router.post("/api/claim-invite").handler(this::handleClaimInvite);
 
         vertx.createHttpServer()
             .requestHandler(router)
@@ -113,5 +114,84 @@ public class AuthVerticle extends AbstractVerticle {
                 }
                 ctx.response().setStatusCode(201).end();
             });
+    }
+
+    private void handleClaimInvite(RoutingContext ctx) {
+        JsonObject body = ctx.body().asJsonObject();
+        String inviteToken = body.getString("invite_token");
+        String username = body.getString("username");
+        String password = body.getString("password");
+
+        if (inviteToken == null || inviteToken.isBlank() || username == null || username.isBlank() || password == null || password.isBlank()) {
+            ctx.response().setStatusCode(400).end("Invalid payload");
+            return;
+        }
+
+        // 1) Find pending employee by invite token
+        dbClient.queryWithParams(
+            "SELECT id, role FROM employees WHERE invite_token = ? AND status = 'pending'",
+            new JsonArray().add(inviteToken),
+            empRes -> {
+                if (empRes.failed() || empRes.result().getRows().isEmpty()) {
+                    ctx.response().setStatusCode(400).end("Invalid or expired invite token");
+                    return;
+                }
+
+                JsonObject emp = empRes.result().getRows().get(0);
+                int employeeId = emp.getInteger("id");
+                String employeeRole = emp.getString("role", "EMPLOYEE");
+
+                // 2) Create user
+                String hashed = at.favre.lib.crypto.bcrypt.BCrypt.withDefaults().hashToString(12, password.toCharArray());
+                dbClient.updateWithParams(
+                    "INSERT INTO users(username, password, role) VALUES (?, ?, ?)",
+                    new JsonArray().add(username).add(hashed).add(employeeRole),
+                    createUserRes -> {
+                        if (createUserRes.failed()) {
+                            String msg = createUserRes.cause() != null ? createUserRes.cause().getMessage() : "";
+                            if (msg != null && msg.toLowerCase().contains("duplicate")) {
+                                ctx.response().setStatusCode(409).end("Username already exists");
+                            } else {
+                                ctx.response().setStatusCode(500).end("Failed to create user account");
+                            }
+                            return;
+                        }
+
+                        // 3) Fetch new user id
+                        dbClient.queryWithParams(
+                            "SELECT id FROM users WHERE username = ?",
+                            new JsonArray().add(username),
+                            userIdRes -> {
+                                if (userIdRes.failed() || userIdRes.result().getRows().isEmpty()) {
+                                    ctx.response().setStatusCode(500).end("Failed to retrieve user ID");
+                                    return;
+                                }
+
+                                int userId = userIdRes.result().getRows().get(0).getInteger("id");
+
+                                // 4) Link employee and activate (atomic finalization)
+                                dbClient.updateWithParams(
+                                    "UPDATE employees SET user_id = ?, status = 'active', activated_at = CURRENT_TIMESTAMP, invite_token = NULL WHERE id = ?",
+                                    new JsonArray().add(userId).add(employeeId),
+                                    linkRes -> {
+                                        if (linkRes.failed() || linkRes.result().getUpdated() == 0) {
+                                            // Roll back user
+                                            dbClient.updateWithParams("DELETE FROM users WHERE id = ?", new JsonArray().add(userId), delRes -> {
+                                                ctx.response().setStatusCode(500).end("Failed to link employee account");
+                                            });
+                                        } else {
+                                            ctx.response()
+                                                .setStatusCode(201)
+                                                .putHeader("Content-Type", "application/json")
+                                                .end(new JsonObject().put("message", "Account created successfully").encode());
+                                        }
+                                    }
+                                );
+                            }
+                        );
+                    }
+                );
+            }
+        );
     }
 }

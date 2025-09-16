@@ -17,6 +17,15 @@
     </div>
 
     <div class="form-group">
+      <label for="email">Email</label>
+      <input formControlName="email" type="email" class="form-input" id="email" />
+      <div *ngIf="formControls['email'].invalid && (formControls['email'].dirty || formControls['email'].touched)" class="text-danger">
+        <small *ngIf="formControls['email'].errors?.['required']">Email is required</small>
+        <small *ngIf="formControls['email'].errors?.['email']">Please enter a valid email</small>
+      </div>
+    </div>
+
+    <div class="form-group">
       <label for="position">Position</label>
       <input formControlName="position" class="form-input" id="position" />
       <div *ngIf="formControls['position'].invalid && (formControls['position'].dirty || formControls['position'].touched)" class="text-danger">
@@ -29,6 +38,16 @@
       <select formControlName="job_type" class="form-control">
         <option *ngFor="let job_type of job_types" [value]="job_type">{{ job_type }}</option>
       </select>
+    </div>
+
+    <div class="form-group" *ngIf="authService.isAdmin()">
+      <label class="form-label">Role</label>
+      <select formControlName="role" class="form-control">
+        <option *ngFor="let role of userRoles" [value]="role">{{ role }}</option>
+      </select>
+      <div *ngIf="formControls['role'].invalid && (formControls['role'].dirty || formControls['role'].touched)" class="text-danger">
+        <small *ngIf="formControls['role'].errors?.['required']">Role is required</small>
+      </div>
     </div>
 
     <div class="button-group">
@@ -58,19 +77,35 @@
       <thead>
         <tr>
           <th>Name</th>
+          <th>Email</th>
           <th>Position</th>
           <th>Job type</th>
+          <th>Role</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
        <tr *ngFor="let employee of filteredEmployees | paginate: { itemsPerPage: 5, currentPage: currentPage }">
           <td>{{ employee.name }}</td>
+          <td>{{ employee.email }}</td>
           <td>{{ employee.position }}</td>
           <td>{{ employee.job_type }}</td>
+          <td>{{ employee.role }}</td>
+          <td>
+            <span class="status" [class.status_pending]="employee.status === 'pending'" [class.status_active]="employee.status === 'active'" [class.badge-warning]="employee.status === 'pending'" [class.badge-success]="employee.status === 'active'">
+              {{ employee.status }}
+            </span>
+          </td>
           <td class="item-buttons">
-            <button (click)="onEdit(employee)"><i class="fa-solid fa-pen-to-square"></i></button>
-            <button  *ngIf="employee.id" (click)="onDelete(employee.id)"><i class="fa-solid fa-trash"></i></button>
+            <button (click)="onEdit(employee)" title="Edit Employee"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button *ngIf="employee.status === 'pending'" (click)="resendInvite(employee)" title="Resend Invite">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+            <button *ngIf="employee.status === 'pending' && employee.invite_token" (click)="showInviteLink(employee.invite_token!, employee.name, employee.email)" title="View Invite Link">
+              <i class="fa-solid fa-link"></i>
+            </button>
+            <button *ngIf="employee.id" (click)="onDelete(employee.id)" title="Delete Employee"><i class="fa-solid fa-trash"></i></button>
           </td>
         </tr>
       </tbody>

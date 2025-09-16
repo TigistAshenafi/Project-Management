@@ -80,4 +80,20 @@ export class AuthService {
     const decoded = this.decodeToken(token);
     return decoded?.exp ? Date.now() >= decoded.exp * 1000 : true;
   }
+
+  getUserRole(): string | null {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    const decoded = this.decodeToken(token);
+    return decoded?.role || null;
+  }
+
+  isAdmin(): boolean {
+    return this.getUserRole() === 'ADMIN';
+  }
+
+  isProjectManager(): boolean {
+    const role = this.getUserRole();
+    return role === 'PROJECT_MANAGER' || role === 'ADMIN';
+  }
 }

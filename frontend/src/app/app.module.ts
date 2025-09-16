@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgChartsModule } from 'ng2-charts';
-import { RoleAssignmentComponent } from './components/role-assignment/role-assignment.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -33,10 +32,11 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { NotificationBellComponent } from './components/notification-bell/notification-bell.component';
+import { InviteClaimComponent } from './components/invite-claim/invite-claim.component';
 @NgModule({
   declarations: [
     AppComponent,
-    RoleAssignmentComponent,
+    // RoleAssignmentComponent,
     LoginComponent,
     RegisterComponent,
     DashboardComponent,
@@ -50,6 +50,7 @@ import { NotificationBellComponent } from './components/notification-bell/notifi
     AdminDashboardComponent,
     NotificationListComponent,
     NotificationBellComponent,
+    InviteClaimComponent,
   ],
   imports: [
     BrowserModule,

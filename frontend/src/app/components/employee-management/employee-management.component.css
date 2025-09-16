@@ -13,7 +13,25 @@
   padding: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
+.status {
+  color: black;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
 
+.status_active {
+  background: rgba(40, 167, 69, 0.2);
+  color: #155724;
+  border: 1px solid #28a745;
+}
+.status_pending {
+   background: rgba(255, 193, 7, 0.2);
+   color: #856404;
+   border: 1px solid #ffc107;
+}
 /* Employee specific responsive adjustments */
 @media (max-width: 768px) {
   .employee-form-container,

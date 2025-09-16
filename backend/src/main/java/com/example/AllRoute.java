@@ -11,7 +11,9 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.JWTAuthHandler;
+import io.vertx.ext.web.RoutingContext;
 
+import com.example.model.UserRole;
 import com.example.controller.*;
 
 import java.util.Set;
@@ -49,6 +51,8 @@ public class AllRoute extends AbstractVerticle {
                 .exposedHeaders(Set.of("Authorization"))
                 .allowCredentials(true));
 
+        
+
         router.options().handler(ctx -> {
             ctx.response()
                     .putHeader("Access-Control-Allow-Origin", "*")
@@ -63,20 +67,20 @@ public class AllRoute extends AbstractVerticle {
 
         // JWT middleware for protected routes
         router.route().handler(JWTAuthHandler.create(jwtAuth));
-        router.route("/api/employees/*").handler(JWTAuthHandler.create(jwtAuth));
-        router.route("/api/projects/*").handler(JWTAuthHandler.create(jwtAuth));
+        router.route("/api/*").handler(this::handleAuth);
 
         // --- Employee Routes ---
         router.get("/api/employees").handler(employeeHandler::getAllEmployees);
-        router.post("/api/employees").handler(employeeHandler::createEmployee);
-        router.put("/api/employees/:id").handler(employeeHandler::updateEmployee);
-        router.delete("/api/employees/:id").handler(employeeHandler::deleteEmployee);
+        router.post("/api/employees").handler(this::requireAdmin).handler(employeeHandler::createEmployee);
+        router.put("/api/employees/:id").handler(this::requireAdmin).handler(employeeHandler::updateEmployee);
+        router.delete("/api/employees/:id").handler(this::requireAdmin).handler(employeeHandler::deleteEmployee);
+        router.post("/api/employees/:id/resend-invite").handler(this::requireAdmin).handler(employeeHandler::resendInvite);
 
         // --- Project Routes ---
         router.get("/api/projects").handler(projectHandler::getAllProjects);
-        router.post("/api/projects").handler(projectHandler::createProject);
-        router.put("/api/projects/:id").handler(projectHandler::updateProject);
-        router.delete("/api/projects/:id").handler(projectHandler::deleteProject);
+        router.post("/api/projects").handler(this::requireProjectManager).handler(projectHandler::createProject);
+        router.put("/api/projects/:id").handler(this::requireProjectManager).handler(projectHandler::updateProject);
+        router.delete("/api/projects/:id").handler(this::requireProjectManager).handler(projectHandler::deleteProject);
 
         // --- Task Routes ---
         router.get("/api/tasks").handler(taskHandler::getAllTask);
@@ -104,7 +108,7 @@ public class AllRoute extends AbstractVerticle {
         router.delete("/api/documents/:id").handler(documentHandler::deleteDocument);
 
         // --- Admin Dashboard Report Route ---
-router.get("/api/admin/dashboard/summary").handler(dashboardHandler::getDashboardSummary);
+        router.get("/api/admin/dashboard/summary").handler(this::requireAdmin).handler(dashboardHandler::getDashboardSummary);
 
 router.get("/api/notifications/:userId").handler(ctx -> {
     String userId = ctx.pathParam("userId"); // as String since it's UUID
@@ -128,6 +132,34 @@ router.get("/api/notifications/:userId").handler(ctx -> {
                 .listen(8081)
                 .onSuccess(server -> startPromise.complete())
                 .onFailure(startPromise::fail);
+    }
+
+    private void handleAuth(RoutingContext ctx) {
+        if (ctx.user() != null) {
+            String role = ctx.user().principal().getString("role");
+            ctx.put("userRole", role);
+            ctx.next();
+        } else {
+            ctx.fail(401); // Unauthorized
+        }
+    }
+
+    private void requireAdmin(RoutingContext ctx) {
+        String role = ctx.get("userRole");
+        if (UserRole.ADMIN.toString().equals(role)) {
+            ctx.next();
+        } else {
+            ctx.fail(403); // Forbidden
+        }
+    }
+
+    private void requireProjectManager(RoutingContext ctx) {
+        String role = ctx.get("userRole");
+        if (UserRole.PROJECT_MANAGER.toString().equals(role) || UserRole.ADMIN.toString().equals(role)) {
+            ctx.next();
+        } else {
+            ctx.fail(403); // Forbidden
+        }
     }
 }
 

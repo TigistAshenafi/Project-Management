@@ -1,11 +1,13 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { NotificationService } from '../../core/Services/notification.service';
 import { Notification } from '../../core/models/notification.model';
+// import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-notification-bell',
   templateUrl: './notification-bell.component.html',
-  styleUrls: ['./notification-bell.component.css']
+  styleUrls: ['./notification-bell.component.css'],
+  // imports: [MatIconModule]
 })
 export class NotificationBellComponent implements OnChanges {
 @Input() userId!: string;

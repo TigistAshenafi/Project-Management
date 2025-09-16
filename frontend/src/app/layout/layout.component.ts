@@ -30,7 +30,7 @@ export class LayoutComponent {
   notifications: Notification[] = [];
 
   constructor(
-    @Inject(AuthService) private authService: AuthService,
+    @Inject(AuthService) public authService: AuthService,
     private taskService: TaskService,
     private notificationService: NotificationService,
     private router: Router

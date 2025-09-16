@@ -73,7 +73,7 @@ public class MainVerticle extends AbstractVerticle {
                 for (JsonObject row : res.result().getRows()) {
                     int userId = row.getInteger("user_id");
                     String projectName = row.getString("project_name");
-                    String message = "📅 Project '" + projectName + "' is due in 7 days!";
+                    String message = "Project '" + projectName + "' is due in 7 days!";
 
                     String checkQuery = """
                         SELECT COUNT(*) AS count
