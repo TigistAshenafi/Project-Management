@@ -3,6 +3,7 @@ com\example\AllRoute.class
 com\example\AuthVerticle.class
 com\example\MySQLVerticle.class
 com\example\controller\ProjectHandler.class
+com\example\util\EmailUtil.class
 com\example\controller\TimeLogHandler.class
 com\example\MainVerticle.class
 com\example\controller\DashboardHandler.class
@@ -10,4 +11,5 @@ com\example\controller\DocumentHandler.class
 com\example\config\DatabaseConfig.class
 com\example\model\UserRole.class
 com\example\controller\EmployeeHandler.class
+com\example\util\EmailUtil$1.class
 com\example\controller\TaskHandler.class

@@ -164,85 +164,85 @@ clearFilters(): void {
 
     const inviteLink = `${window.location.origin}/invite-claim?token=${inviteToken}`;
 
-    // Create a modal with the invite details
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    `;
+  //   // Create a modal with the invite details
+  //   const modal = document.createElement('div');
+  //   modal.style.cssText = `
+  //     position: fixed;
+  //     top: 0;
+  //     left: 0;
+  //     width: 100%;
+  //     height: 100%;
+  //     background: rgba(0,0,0,0.5);
+  //     display: flex;
+  //     justify-content: center;
+  //     align-items: center;
+  //     z-index: 1000;
+  //   `;
 
-    const modalContent = document.createElement('div');
-    modalContent.style.cssText = `
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 600px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    `;
+  //   const modalContent = document.createElement('div');
+  //   modalContent.style.cssText = `
+  //     background: white;
+  //     padding: 30px;
+  //     border-radius: 10px;
+  //     max-width: 600px;
+  //     width: 90%;
+  //     max-height: 80vh;
+  //     overflow-y: auto;
+  //     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  //   `;
 
-    modalContent.innerHTML = `
-      <div style="text-align: center; margin-bottom: 20px;">
-        <h2 style="color: #28a745; margin: 0;">🎉 Employee Invitation Created!</h2>
-      </div>
+  //   modalContent.innerHTML = `
+  //     <div style="text-align: center; margin-bottom: 20px;">
+  //       <h2 style="color: #28a745; margin: 0;">🎉 Employee Invitation Created!</h2>
+  //     </div>
 
-      <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-        <h3 style="margin: 0 0 10px 0; color: #333;">Employee Details:</h3>
-        <p style="margin: 5px 0;"><strong>Name:</strong> ${employeeName}</p>
-        <p style="margin: 5px 0;"><strong>Email:</strong> ${employeeEmail}</p>
-      </div>
+  //     <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+  //       <h3 style="margin: 0 0 10px 0; color: #333;">Employee Details:</h3>
+  //       <p style="margin: 5px 0;"><strong>Name:</strong> ${employeeName}</p>
+  //       <p style="margin: 5px 0;"><strong>Email:</strong> ${employeeEmail}</p>
+  //     </div>
 
-      <div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-        <h3 style="margin: 0 0 10px 0; color: #1976d2;">🔗 Invite Link:</h3>
-        <div style="background: white; padding: 10px; border: 1px solid #ddd; border-radius: 3px; word-break: break-all; font-family: monospace; font-size: 12px;">
-          ${inviteLink}
-        </div>
-        <button onclick="navigator.clipboard.writeText('${inviteLink}')" style="margin-top: 10px; padding: 8px 15px; background: #1976d2; color: white; border: none; border-radius: 3px; cursor: pointer;
-        transition: all 0.2s ease;" title="Copy invite link to clipboard"
-        transition: all 0.2s ease; hover:transform: scale(1.01);
-  hover:transition: var(--transition); hover: background: #1565c0;">
-          <i class="fa-regular fa-clone"></i>
-        </button>
-      </div>
+  //     <div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+  //       <h3 style="margin: 0 0 10px 0; color: #1976d2;">🔗 Invite Link:</h3>
+  //       <div style="background: white; padding: 10px; border: 1px solid #ddd; border-radius: 3px; word-break: break-all; font-family: monospace; font-size: 12px;">
+  //         ${inviteLink}
+  //       </div>
+  //       <button onclick="navigator.clipboard.writeText('${inviteLink}')" style="margin-top: 10px; padding: 8px 15px; background: #1976d2; color: white; border: none; border-radius: 3px; cursor: pointer;
+  //       transition: all 0.2s ease;" title="Copy invite link to clipboard"
+  //       transition: all 0.2s ease; hover:transform: scale(1.01);
+  // hover:transition: var(--transition); hover: background: #1565c0;">
+  //         <i class="fa-regular fa-clone"></i>
+  //       </button>
+  //     </div>
 
-      <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-        <h3 style="margin: 0 0 10px 0; color: #856404;">📋 Instructions for Admin:</h3>
-        <ol style="margin: 0; padding-left: 20px;">
-          <li>Copy the invite link above</li>
-          <li>Send it to the employee via email, WhatsApp, or any messaging platform</li>
-          <li>The employee will click the link to set up their account</li>
-          <li>Once they complete registration, their status will change to "Active"</li>
-        </ol>
-      </div>
+  //     <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+  //       <h3 style="margin: 0 0 10px 0; color: #856404;">📋 Instructions for Admin:</h3>
+  //       <ol style="margin: 0; padding-left: 20px;">
+  //         <li>Copy the invite link above</li>
+  //         <li>Send it to the employee via email, WhatsApp, or any messaging platform</li>
+  //         <li>The employee will click the link to set up their account</li>
+  //         <li>Once they complete registration, their status will change to "Active"</li>
+  //       </ol>
+  //     </div>
 
-      <div style="text-align: center;">
-        <button onclick="this.closest('.modal').remove()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;
-        font-size: 16px; transition: all 0.2s ease; hover:transform: translateY(1.3px);">
-          Close
-        </button>
-      </div>
-    `;
+  //     <div style="text-align: center;">
+  //       <button onclick="this.closest('.modal').remove()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;
+  //       font-size: 16px; transition: all 0.2s ease; hover:transform: translateY(1.3px);">
+  //         Close
+  //       </button>
+  //     </div>
+  //   `;
 
-    modal.className = 'modal';
-    modal.appendChild(modalContent);
-    document.body.appendChild(modal);
+    // modal.className = 'modal';
+    // modal.appendChild(modalContent);
+    // document.body.appendChild(modal);
 
-    // Close modal when clicking outside
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.remove();
-      }
-    });
+    // // Close modal when clicking outside
+    // modal.addEventListener('click', (e) => {
+    //   if (e.target === modal) {
+    //     modal.remove();
+    //   }
+    // });
 
     // Also log to console for easy copying
     console.log('=== INVITE DETAILS ===');

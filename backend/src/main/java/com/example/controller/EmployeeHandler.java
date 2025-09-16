@@ -3,7 +3,7 @@ package com.example.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
+import com.example.util.EmailUtil;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.jdbc.JDBCClient;
@@ -103,11 +103,16 @@ public class EmployeeHandler {
                 res -> {
                     if (res.succeeded()) {
                         long generatedId = res.result().getKeys().getLong(0);
+
+                        // --- Send invitation email ---
+                        String invitationLink = "https://your-frontend-domain.com/invite?token=" + inviteToken;
+                        EmailUtil.sendInvitationEmail(employee.getString("email"), invitationLink);
+
                         JsonObject responseJson = new JsonObject()
                             .put("message", "Employee created and invite sent")
                             .put("id", generatedId)
                             .put("invite_token", inviteToken);
-    
+
                         context.response()
                             .setStatusCode(201)
                             .putHeader("Content-Type", "application/json")
@@ -209,14 +214,27 @@ public class EmployeeHandler {
             new JsonArray().add(newInviteToken).add(id),
             res -> {
                 if (res.succeeded()) {
-                    JsonObject responseJson = new JsonObject()
-                        .put("message", "Invite resent")
-                        .put("invite_token", newInviteToken);
-                    
-                    context.response()
-                        .setStatusCode(200)
-                        .putHeader("Content-Type", "application/json")
-                        .end(responseJson.encode());
+                    // --- Fetch email and send invitation ---
+                    dbClient.queryWithParams(
+                        "SELECT email FROM employees WHERE id = ?",
+                        new JsonArray().add(id),
+                        emailRes -> {
+                            if (emailRes.succeeded() && !emailRes.result().getRows().isEmpty()) {
+                                String email = emailRes.result().getRows().get(0).getString("email");
+                                String invitationLink = "http://localhost:4200/invite-claim?token=" + newInviteToken;
+                                EmailUtil.sendInvitationEmail(email, invitationLink);
+                            }
+                            JsonObject responseJson = new JsonObject()
+                                .put("message", "Invite resent")
+                                
+                                .put("invite_token", newInviteToken);
+
+                            context.response()
+                                .setStatusCode(200)
+                                .putHeader("Content-Type", "application/json")
+                                .end(responseJson.encode());
+                        }
+                    );
                 } else {
                     context.response()
                         .setStatusCode(500)
