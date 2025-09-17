@@ -33,6 +33,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { NotificationBellComponent } from './components/notification-bell/notification-bell.component';
 import { InviteClaimComponent } from './components/invite-claim/invite-claim.component';
+import { ConfirmDialogComponent } from './shared/confirm-dialog/confirm-dialog.component';
+import { ConfirmService } from './shared/confirm.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -51,6 +53,7 @@ import { InviteClaimComponent } from './components/invite-claim/invite-claim.com
     NotificationListComponent,
     NotificationBellComponent,
     InviteClaimComponent,
+    ConfirmDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -73,6 +76,7 @@ import { InviteClaimComponent } from './components/invite-claim/invite-claim.com
     AuthService,
     AuthGuard,
     RoleGuard,
+    ConfirmService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

@@ -88,8 +88,8 @@
           <i class="bi bi-person-circle"></i>
         </div>
         <div class="user-details">
-          <h3 class="mb-1">{{ currentUser.username || "User" }}</h3>
-          <span class="badge bg-primary">{{ currentUser.role || "Viewer" }}</span>
+          <h3 class="mb-1">{{ currentUser?.sub || "User" }}</h3>
+          <span class="badge bg-primary">{{ currentUser?.role || "Viewer" }}</span>
         </div>
       </div>
     </div>
@@ -107,6 +107,16 @@
             <span>Dashboard</span>
           </a>
         </li>
+        <!-- <li class="nav-item" *ngIf="authService.isEmployee()">
+          <a
+            class="nav-link d-flex align-items-center"
+            routerLink="/dashboard/tasks"
+            routerLinkActive="active"
+            aria-current="page">
+            <i class="bi bi-list-task me-3"></i>
+            <span>My Tasks</span>
+          </a>
+        </li> -->
         <li class="nav-item" *ngIf="authService.isAdmin()">
           <a
             class="nav-link d-flex align-items-center"
@@ -140,7 +150,7 @@
             routerLink="/dashboard/timelog"
             routerLinkActive="active">
             <i class="bi bi-clock me-3"></i>
-            <span>Time Tracking</span>
+            <span>Time Logs</span>
           </a>
         </li>
         <li class="nav-item">
@@ -160,6 +170,8 @@
   <main class="content p-4" role="main" [class.sidebar-hidden]="!isSidebarVisible">
     <div class="content-wrapper">
       <router-outlet></router-outlet>
+      <!-- Global confirmation dialog host -->
+      <app-confirm-dialog></app-confirm-dialog>
     </div>
   </main>
 </div>

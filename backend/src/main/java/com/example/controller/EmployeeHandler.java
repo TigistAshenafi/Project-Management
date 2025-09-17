@@ -105,7 +105,7 @@ public class EmployeeHandler {
                         long generatedId = res.result().getKeys().getLong(0);
 
                         // --- Send invitation email ---
-                        String invitationLink = "https://your-frontend-domain.com/invite?token=" + inviteToken;
+                        String invitationLink = "https://localhost:4200/invite-claim?token=" + inviteToken;
                         EmailUtil.sendInvitationEmail(employee.getString("email"), invitationLink);
 
                         JsonObject responseJson = new JsonObject()
@@ -173,14 +173,48 @@ public class EmployeeHandler {
                 .add(id),
             res -> {
                 if (res.succeeded()) {
-                    JsonObject responseJson = new JsonObject()
-                        .put("message", "Employee updated")
-                        .put("id", id);
-    
-                    context.response()
-                        .setStatusCode(200)
-                        .putHeader("Content-Type", "application/json")
-                        .end(responseJson.encode());
+                    // Also propagate role change to the linked user account so JWT reflects new role at next login
+                    dbClient.updateWithParams(
+                        "UPDATE users SET role = ? WHERE id = (SELECT user_id FROM employees WHERE id = ?)",
+                        new JsonArray()
+                            .add(employee.getString("role"))
+                            .add(id),
+                        userUpdateRes -> {
+                            int updated = 0;
+                            if (userUpdateRes.succeeded() && userUpdateRes.result() != null) {
+                                updated = userUpdateRes.result().getUpdated();
+                            }
+
+                            if (updated == 0) {
+                                // Fallback: try matching employee email to user username when not linked
+                                dbClient.updateWithParams(
+                                    "UPDATE users SET role = ? WHERE username = (SELECT email FROM employees WHERE id = ?)",
+                                    new JsonArray()
+                                        .add(employee.getString("role"))
+                                        .add(id),
+                                    fallbackRes -> {
+                                        JsonObject responseJson = new JsonObject()
+                                            .put("message", "Employee updated")
+                                            .put("id", id);
+
+                                        context.response()
+                                            .setStatusCode(200)
+                                            .putHeader("Content-Type", "application/json")
+                                            .end(responseJson.encode());
+                                    }
+                                );
+                            } else {
+                                JsonObject responseJson = new JsonObject()
+                                    .put("message", "Employee updated")
+                                    .put("id", id);
+
+                                context.response()
+                                    .setStatusCode(200)
+                                    .putHeader("Content-Type", "application/json")
+                                    .end(responseJson.encode());
+                            }
+                        }
+                    );
                 } else {
                     context.response()
                         .setStatusCode(500)

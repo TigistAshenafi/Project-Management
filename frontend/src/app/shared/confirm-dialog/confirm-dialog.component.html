@@ -1,0 +1,12 @@
+<div *ngIf="confirm.visible" class="confirm-backdrop">
+  <div class="confirm-modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="'confirm-title'">
+    <h3 id="confirm-title">{{ confirm.title || 'Please confirm' }}</h3>
+    <p class="confirm-message">{{ confirm.message }}</p>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" (click)="confirm.cancel()">Cancel</button>
+      <button class="btn btn-danger" (click)="confirm.ok()">Delete</button>
+    </div>
+  </div>
+</div>
+
+

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ConfirmService } from 'src/app/shared/confirm.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectsService } from '../../core/Services/projects.service';
 import { Project } from '../../core/models/project.model';
@@ -33,6 +34,7 @@ export class ProjectManagementComponent implements OnInit {
     private projectsService: ProjectsService,
     private formBuilder: FormBuilder,
     private toastr: ToastrService,
+    private confirm: ConfirmService,
   ) {}
 
   ngOnInit(): void {
@@ -156,25 +158,27 @@ export class ProjectManagementComponent implements OnInit {
   }
 
   onDelete(id: number): void {
-    if (confirm('Are you sure you want to delete this project?')) {
-      this.projectsService.deleteProject(id).subscribe({
-        next: (e: any) => {
-          console.log('Project deleted:', e);
-          this.projects = this.projects.filter(project => project.id !== id);
-          this.toastr.success('Project deleted successfully!', 'Deleted', {
-            toastClass: 'toast-success',
-            positionClass: 'toast-center-center',
-          });
-        },
-        error: (err: any) => {
-          this.toastr.error('Failed to delete project', 'Error', {
-            toastClass: 'toast-error',
-            positionClass: 'toast-center-center',
-          });
-          console.error(err);
-        }
+    this.confirm.confirm('This action cannot be undone. Do you want to delete this item?', 'Delete project')
+      .then((ok) => {
+        if (!ok) return;
+        this.projectsService.deleteProject(id).subscribe({
+          next: (e: any) => {
+            console.log('Project deleted:', e);
+            this.projects = this.projects.filter(project => project.id !== id);
+            this.toastr.success('Project deleted successfully!', 'Deleted', {
+              toastClass: 'toast-success',
+              positionClass: 'toast-center-center',
+            });
+          },
+          error: (err: any) => {
+            this.toastr.error('Failed to delete project', 'Error', {
+              toastClass: 'toast-error',
+              positionClass: 'toast-center-center',
+            });
+            console.error(err);
+          }
+        });
       });
-    }
   }
 
   loadProjects(): void {

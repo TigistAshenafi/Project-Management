@@ -7,6 +7,7 @@ com\example\util\EmailUtil.class
 com\example\controller\TimeLogHandler.class
 com\example\MainVerticle.class
 com\example\controller\DashboardHandler.class
+com\example\util\EmailUtil$2.class
 com\example\controller\DocumentHandler.class
 com\example\config\DatabaseConfig.class
 com\example\model\UserRole.class

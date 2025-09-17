@@ -58,7 +58,7 @@ public class AuthVerticle extends AbstractVerticle {
 
         // Use queryWithParams instead of preparedQuery
         dbClient.queryWithParams(
-            "SELECT * FROM users WHERE username = ?",
+            "SELECT u.*, COALESCE(e.role, u.role) AS role FROM users u LEFT JOIN employees e ON e.user_id = u.id WHERE u.username = ?",
             new JsonArray().add(username),
             res -> {
                 if (res.failed()) {

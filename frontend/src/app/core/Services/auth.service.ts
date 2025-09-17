@@ -39,8 +39,21 @@ export class AuthService {
         (res: any) => {
           console.log("Login success:", res);
           localStorage.setItem('token', res.token);
-          this.currentUserSubject.next(this.decodeToken(res.token));
-          this.router.navigate(['/dashboard']);
+          const decodedToken = this.decodeToken(res.token);
+          this.currentUserSubject.next(decodedToken);
+
+          // Redirect based on user role
+          const role = decodedToken?.role;
+          if (role === 'ADMIN') {
+            this.router.navigate(['/dashboard/adminDashboard']);
+          } else if (role === 'PROJECT_MANAGER') {
+            this.router.navigate(['/dashboard/projects']);
+          } else if (role === 'EMPLOYEE') {
+            this.router.navigate(['/dashboard/tasks']);
+          } else {
+            // Fallback to dashboard for unknown roles
+            this.router.navigate(['/dashboard']);
+          }
         },
         (error) => {
           console.error("Login failed:", error);
@@ -95,5 +108,9 @@ export class AuthService {
   isProjectManager(): boolean {
     const role = this.getUserRole();
     return role === 'PROJECT_MANAGER' || role === 'ADMIN';
+  }
+
+  isEmployee(): boolean {
+    return this.getUserRole() === 'EMPLOYEE';
   }
 }

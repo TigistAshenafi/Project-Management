@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Employee } from '../../core/models/employee.model';
 import { Project } from '../../core/models/project.model';
 import { AuthService } from '../../core/Services/auth.service';
+import { ConfirmService } from 'src/app/shared/confirm.service';
 
 @Component({
   selector: 'app-task-management',
@@ -36,8 +37,9 @@ export class TaskManagementComponent implements OnInit {
   constructor(private fb: FormBuilder,
      private taskService: TaskService,
       private toastr: ToastrService,
-      private authService: AuthService,
-) {}
+      public authService: AuthService,
+      private confirm: ConfirmService,
+ ) {}
 
   ngOnInit() {
     const today = new Date();
@@ -158,7 +160,9 @@ addTasks(): void {
   }
 
   onDelete(id: number) {
-    if (confirm('Are you sure you want to delete this task?')) {
+    this.confirm.confirm('This action cannot be undone. Do you want to delete this item?', 'Delete task')
+      .then((ok) => {
+        if (!ok) return;
       this.taskService.deleteTask(id).subscribe({
         next: (e) => {
           console.log('Task deleted:', e);
@@ -176,7 +180,7 @@ addTasks(): void {
           console.error(err);
         }
       });
-    }
+      });
   }
 
   loadTask(): void {

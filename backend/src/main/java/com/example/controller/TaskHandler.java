@@ -10,6 +10,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.web.RoutingContext;
+import com.example.util.EmailUtil;
 // import java.time.*;
 import java.sql.Timestamp;
 
@@ -81,6 +82,25 @@ public void getAllTask(RoutingContext context) {
                             .put("message", "Task added")
                             .put("id", generatedId);
     
+                        // Send email to assigned employee if available
+                        if (employee_id != null) {
+                            // Look up employee email and project name
+                            dbClient.queryWithParams(
+                                "SELECT e.email AS email, p.name AS project_name FROM employees e LEFT JOIN projects p ON p.id = ? WHERE e.id = ?",
+                                new JsonArray().add(project_id).add(employee_id),
+                                infoRes -> {
+                                    if (infoRes.succeeded() && !infoRes.result().getRows().isEmpty()) {
+                                        JsonObject row = infoRes.result().getRows().get(0);
+                                        String email = row.getString("email");
+                                        String projectName = row.getString("project_name");
+                                        if (email != null && !email.isBlank()) {
+                                            EmailUtil.sendTaskAssignmentEmail(email, title, projectName, due_date);
+                                        }
+                                    }
+                                }
+                            );
+                        }
+
                         context.response()
                             .setStatusCode(201)
                             .putHeader("Content-Type", "application/json")

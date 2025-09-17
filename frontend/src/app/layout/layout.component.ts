@@ -145,9 +145,9 @@ export class LayoutComponent {
     } else if (url.includes('employees')) {
       this.currentPageTitle = 'Employee Management';
     } else if (url.includes('projects')) {
-      this.currentPageTitle = 'Project Management';
+      this.currentPageTitle = this.authService.isProjectManager() ?'Project Management' : 'Project Management';
     } else if (url.includes('tasks')) {
-      this.currentPageTitle = 'Task Management';
+      this.currentPageTitle = this.authService.isEmployee() ? 'Task Management' : 'Task Management';
     } else if (url.includes('timelog')) {
       this.currentPageTitle = 'Time Tracking';
     } else if (url.includes('document')) {

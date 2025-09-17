@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Employee } from '../../core/models/employee.model';
 import { AuthService } from 'src/app/core/Services/auth.service';
 import { UserService } from 'src/app/core/Services/user.service'; // Import UserService
+import { ConfirmService } from 'src/app/shared/confirm.service';
 
 interface User {
   id: number;
@@ -40,7 +41,8 @@ export class EmployeeManagementComponent implements OnInit {
     private employeeService: EmployeeService,
     private toastr: ToastrService,
     public authService: AuthService,
-    private userService: UserService // Inject UserService
+    private userService: UserService, // Inject UserService
+    private confirm: ConfirmService
   ) {}
 
   ngOnInit(): void {
@@ -49,6 +51,7 @@ export class EmployeeManagementComponent implements OnInit {
     this.loadAvailableUsers(); // Load available users
     console.log('Is Admin:', this.authService.isAdmin());
     console.log('Current User Value:', this.authService.currentUserValue);
+
 
     // Auto-refresh list every 15s to reflect invite claims
     this.autoRefreshHandle = setInterval(() => {
@@ -137,7 +140,7 @@ clearFilters(): void {
         // Show the invite link to the admin
         this.showInviteLink(response.invite_token, newEmployee.name, newEmployee.email);
 
-        this.toastr.success('Employee created successfully!', 'Success', {
+        this.toastr.success('Email sent successfully!', 'Success', {
           toastClass: 'toast-success',
           positionClass: 'toast-center-center',
         });
@@ -147,7 +150,7 @@ clearFilters(): void {
         this.showForm = false;
       },
       error: (err) => {
-        this.toastr.error('Failed to create employee', 'Error', {
+        this.toastr.error('Failed to send email!', 'Error', {
           toastClass: 'toast-error',
           positionClass: 'toast-center-center',
         });
@@ -291,20 +294,39 @@ clearFilters(): void {
   }
 
   resendInvite(employee: Employee): void {
+    console.log('🔄 Resend invite clicked for employee:', employee);
+
     if (employee.id) {
+      console.log('📧 Calling resendInvite API for employee ID:', employee.id);
+
       this.employeeService.resendInvite(employee.id).subscribe({
         next: (response: any) => {
+
+          console.log('✅ Resend invite success response:', response);
+
           // Show the new invite link
           this.showInviteLink(response.invite_token, employee.name, employee.email);
 
-          this.toastr.success('Invite resent successfully!', 'Success');
+          console.log('🎉 Showing success toast...');
+          this.toastr.success('Email sent successfully!', 'Success',{
+            toastClass: 'toast-success',
+            positionClass: 'toast-center-center',
+          });
           this.loadEmployees();
         },
         error: (err: any) => {
-          this.toastr.error('Failed to resend invite', 'Error');
+          console.log('❌ Resend invite error:', err);
+          console.log('🚨 Showing error toast...');
+          this.toastr.error('Failed to send email!', 'Error',{
+            toastClass: 'toast-error',
+            positionClass: 'toast-center-center',
+          });
           console.error(err);
         }
       });
+    } else {
+      console.log('❌ No employee ID found');
+      this.toastr.error('No employee ID found', 'Error');
     }
   }
 
@@ -330,25 +352,27 @@ clearFilters(): void {
 
 
   onDelete(id: number): void {
-    if (confirm('Are you sure you want to delete this employee?')) {
-      this.employeeService.deleteEmployee(id).subscribe({
-        next: () => {
-          this.loadEmployees();
-          this.employees = this.employees.filter(emp => emp.id !== id);
-          this.toastr.success('Employee deleted successfully', 'Success', {
-          toastClass: 'toast-success',
-          positionClass: 'toast-center-center',
-          });
-        },
-        error: (err) => {
-          this.toastr.error('Failed to delete employee', 'Error',{
-          toastClass: 'toast-error',
-          positionClass: 'toast-center-center',
-          });
-          console.error(err);
-        }
+    this.confirm.confirm('This action cannot be undone. Do you want to delete this item?', 'Delete employee')
+      .then((ok) => {
+        if (!ok) return;
+        this.employeeService.deleteEmployee(id).subscribe({
+          next: () => {
+            this.loadEmployees();
+            this.employees = this.employees.filter(emp => emp.id !== id);
+            this.toastr.success('Employee deleted successfully', 'Success', {
+            toastClass: 'toast-success',
+            positionClass: 'toast-center-center',
+            });
+          },
+          error: (err) => {
+            this.toastr.error('Failed to delete employee', 'Error',{
+            toastClass: 'toast-error',
+            positionClass: 'toast-center-center',
+            });
+            console.error(err);
+          }
+        });
       });
-    }
   }
 
   onCancel(): void {

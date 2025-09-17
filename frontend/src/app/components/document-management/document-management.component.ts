@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ConfirmService } from 'src/app/shared/confirm.service';
 import { DocumentService } from '../../core/Services/document.service';
 import { ToastrService } from 'ngx-toastr';
 import { Document } from '../../core/models/document.model';
@@ -31,7 +32,8 @@ export class DocumentManagementComponent implements OnInit {
 
   constructor(
     private documentService: DocumentService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private confirm: ConfirmService
   ) {}
 
 onFileSelected(event: any): void {
@@ -189,24 +191,25 @@ loadDocuments() {
   }
 
   onDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this document?')) return;
-
-    this.documentService.deleteDocument(id).subscribe({
-      next: (message) => {
-    console.log('Delete success:', message);
-    this.toastr.success('Document deleted successfully','Success',{
-      toastClass:'toast-success',
-      positionClass: 'toast-center-center'
-    });
-    this.loadDocuments();
-  },
-  error: (err) => {
-    console.error('Delete failed', err);
-    this.toastr.error('Failed to delete document', 'Error',{
-      toastClass:'toast-error',
-      positionClass: 'toast-center-center'
-    });
-  }
+    this.confirm.confirm('This action cannot be undone. Do you want to delete this item?', 'Delete document').then((ok) => {
+      if (!ok) return;
+      this.documentService.deleteDocument(id).subscribe({
+        next: (message) => {
+          console.log('Delete success:', message);
+          this.toastr.success('Document deleted successfully','Success',{
+            toastClass:'toast-success',
+            positionClass: 'toast-center-center'
+          });
+          this.loadDocuments();
+        },
+        error: (err) => {
+          console.error('Delete failed', err);
+          this.toastr.error('Failed to delete document', 'Error',{
+            toastClass:'toast-error',
+            positionClass: 'toast-center-center'
+          });
+        }
+      });
     });
   }
 

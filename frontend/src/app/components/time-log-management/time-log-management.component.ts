@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ConfirmService } from 'src/app/shared/confirm.service';
 import { TimeLogService } from '../../core/Services/time-log.service';
 import { TimeLog } from '../../core/models/timeLog.model';
 import { Task } from '../../core/models/task.model';
@@ -35,7 +36,8 @@ export class TimeLogManagementComponent implements OnInit {
   totalHours: number = 0;
 
   constructor(private timeLogService: TimeLogService,
-              private toastr: ToastrService
+              private toastr: ToastrService,
+              private confirm: ConfirmService
   ) {}
 
   ngOnInit(): void {
@@ -168,26 +170,28 @@ submitLog(): void {
 
   // Delete a log
   deleteLog(id: number): void {
-    if (confirm('Are you sure you want to delete this time log?')) {
-      this.timeLogService.deleteTimeLog(id).subscribe({
-        next: () => {
-          this.toastr.success('Task deleted successfully!', 'Success', {
-        toastClass: 'toast-success',
-        positionClass: 'toast-center-center',
-      });
-          if (this.log.task_id) {
-            this.fetchLogs(this.log.task_id);
-             this.loadTasks();
+    this.confirm.confirm('This action cannot be undone. Do you want to delete this item?', 'Delete time log')
+      .then((ok) => {
+        if (!ok) return;
+        this.timeLogService.deleteTimeLog(id).subscribe({
+          next: () => {
+            this.toastr.success('Task deleted successfully!', 'Success', {
+              toastClass: 'toast-success',
+              positionClass: 'toast-center-center',
+            });
+            if (this.log.task_id) {
+              this.fetchLogs(this.log.task_id);
+              this.loadTasks();
+            }
+          },
+          error: (err) => {
+            this.toastr.error('Failed to delete time log!', 'Error', {
+              toastClass: 'toast-error',
+              positionClass: 'toast-center-center',
+            });
           }
-        },
-        error: (err) => {
-           this.toastr.error('Failed to delete time log!', 'Error', {
-             toastClass: 'toast-error',
-             positionClass: 'toast-center-center',
-           });
-        }
+        });
       });
-    }
   }
 applyFilters(): void {
   this.timeLogService.getAllLogs().subscribe({

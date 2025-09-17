@@ -36,7 +36,7 @@ export const routes: Routes = [
       // },
       {path: 'timelog', component: TimeLogManagementComponent},
       {path: 'document', component: DocumentManagementComponent},
-      { path: '', redirectTo: 'adminDashboard', pathMatch: 'full' }
+      { path: '', redirectTo: 'tasks', pathMatch: 'full' }
     ]
   },
   { path: '404', component: ErrorComponent },
